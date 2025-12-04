@@ -8,38 +8,87 @@
               crossorigin="anonymous" referrerpolicy="no-referrer"/>
 
 </head>
-<body class="bg-gradient-to-b from-blue-100 via-white
-               to-purple-100 h-[100vh]">
+<body class="bg-gradient-to-b from-blue-100 via-white to-purple-100 h-[100vh]">
 
 <div class="flex justify-center my-8">
-<form class="w-1/3 justify-self-center mx-8 flex flex-col items-center gap-4">
+    <form id="postForm" class="w-1/3 justify-self-center mx-8 flex flex-col items-center gap-4">
 
-    <!-- Input Row -->
-    <div class="w-full flex items-center bg-white rounded-full border border-blue-200 px-6 py-3 shadow-sm">
-        <input
-                type="text"
-                placeholder="Write text here..."
-                class="flex-grow text-gray-700 placeholder-gray-400 text-lg focus:outline-none">
-    </div>
+        <!-- Input Row -->
+        <div class="w-full flex items-center bg-white rounded-full border border-blue-200 px-6 py-3 shadow-sm">
+            <input id="textContent"
+                   type="text"
+                   placeholder="Write text here..."
+                   class="flex-grow text-gray-700 placeholder-gray-400 text-lg focus:outline-none">
+        </div>
 
-    <!-- Icon Row -->
-    <div class="flex w-4/5 mx-auto justify-between text-3xl text-gray-700">
-        <button class="hover:text-blue-500 transition"><i class="fa-solid fa-gamepad"></i></button>
-        <button class="hover:text-blue-500 transition"><i class="fa-solid fa-hashtag"></i></button>
-        <button class="hover:text-blue-500 transition"><i class="fa-solid fa-paperclip"></i></button>
-        <button
-                type="submit"
-                class="bg-sky-400 hover:bg-sky-500 transition text-white font-semibold px-6 py-2 rounded-full ml-4"
-        >
-            POST
-        </button>
-    </div>
+        <div class="flex items-center justify-center mx-8 gap-4 w-full">
+            <!-- Hidden image Input -->
+            <div id="gameInputWrapper"
+                 class="hidden w-full flex items-center bg-white rounded-full border border-blue-200 px-6 py-1 shadow-sm">
+                <input
+                        type="text"
+                        id="gameInput"
+                        placeholder="Type game title here..."
+                        class="flex-grow text-gray-700 placeholder-gray-400 text-lg focus:outline-none"
+                >
+            </div>
 
-</form>
+            <!-- Hidden Tag Input -->
+            <div id="tagInputWrapper"
+                 class="hidden w-full flex items-center bg-white rounded-full border border-blue-200 px-6 py-1 shadow-sm">
+                <input
+                        type="text"
+                        id="tagInput"
+                        placeholder="Type a tag and press Enter..."
+                        class="flex-grow text-gray-700 placeholder-gray-400 text-lg focus:outline-none"
+                >
+            </div>
+            <div id="imageInputWrapper"
+                 class="hidden w-full flex items-center bg-white rounded-full border border-blue-200 px-6 py-1 shadow-sm">
+                <input
+                        type="text"
+                        id="imageInput"
+                        placeholder="Type a URL image path here..."
+                        class="flex-grow text-gray-700 placeholder-gray-400 text-lg focus:outline-none"
+                >
+            </div>
+
+        </div>
+        <!-- Rendered Tags -->
+        <div id="tagList" class="flex flex-wrap gap-2"></div>
+
+        <!-- Icon Row -->
+        <div class="flex w-4/5 mx-auto justify-between text-3xl text-gray-700">
+            <button type="button"
+                    id="openGameInput"
+                    class="hover:text-blue-500 transition">
+                <i class="fa-solid fa-gamepad"></i></button>
+
+            <button type="button"
+                    id="openTagInput"
+                    class="hover:text-blue-500 transition">
+                <i class="fa-solid fa-hashtag"></i></button>
+
+            <button type="button"
+                    id="openImageInput"
+                    class="hover:text-blue-500 transition">
+                <i class="fa-solid fa-paperclip"></i></button>
+
+            <button
+                    type="submit"
+                    class="bg-sky-400 hover:bg-sky-500 transition text-white font-semibold px-6 py-2 rounded-full ml-4"
+            >
+                POST
+            </button>
+        </div>
+
+    </form>
 </div>
-<hr class="w-full h-[5rem] border-gray-300" />
+<hr class="w-full h-[5rem] border-gray-300"/>
 
 <div class="timeline"></div>
+
+<script src="../js/create-post.js"></script>
 
 </body>
 </html>

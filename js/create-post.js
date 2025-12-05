@@ -44,6 +44,20 @@ async function createPost(event) {
     console.log("creating post")
 
     let textContent = document.querySelector("#textContent")
+    const errorBox = document.querySelector("#postError");
+
+    if (!textContent.value.toString().trim()) {
+        errorBox.textContent = "Please enter some text before posting.";
+        errorBox.classList.remove("hidden");
+
+        textContent.classList.add("border-red-400");
+
+        return;
+    }
+
+    errorBox.classList.add("hidden");
+    textContent.classList.remove("border-red-400");
+
     //need to add profile let
     //need to at createdAt here as well? it autogenerates in backend so probably not but check if we can do without
 

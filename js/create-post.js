@@ -49,10 +49,11 @@ async function createPost(event) {
 
     const postBody = {
         content: textContent.value,
-        userId: 1, // this needs to be changed with logged in user
-        tags: tags,
-        media: imageInput.value,
-        gameTitle: imageInput.value
+        createdAt: new Date().toISOString(),
+        user: {id: 1}, // this needs to be changed with logged in user
+        tags: tags.map,
+        tags: tags.map(t => ({ name: t })),
+        media: imageInput.value ? { url: imageInput.value } : null
     }
 
     console.log("Sending:", postBody);
@@ -66,7 +67,7 @@ async function createPost(event) {
 
         if (!response.ok) throw new Error("Post failed");
 
-        const savedPost = await res.json();
+        const savedPost = await response.json();
         console.log("Saved:", savedPost);
 
         postForm.reset();

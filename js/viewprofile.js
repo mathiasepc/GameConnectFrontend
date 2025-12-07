@@ -1,4 +1,4 @@
-import { createPostElement } from './modules/postModule.js';
+import { createPostElement } from './modules/viewpostModule.js';
 
 document.addEventListener("DOMContentLoaded", () => {
         const URL = "http://localhost:8080/profile";

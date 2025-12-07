@@ -65,7 +65,6 @@ async function createPost(event) {
         content: textContent.value,
         createdAt: new Date().toISOString(),
         user: {id: 1}, // this needs to be changed with logged in user
-        tags: tags.map,
         tags: tags.map(t => ({ name: t })),
         media: imageInput.value ? { url: imageInput.value } : null
     }

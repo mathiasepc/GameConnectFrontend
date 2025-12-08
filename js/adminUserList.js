@@ -1,6 +1,9 @@
 //import {apiRequest} from "/modules/apiRequest";
 
-const userTable = document.getElementById("user-table")
+const userTable = document.getElementById("user-table-tbody")
+const nextButton = document.getElementById("next-button")
+const previousButton = document.getElementById("previous-button")
+const pageSelector = document.getElementById("page-selector")
 const users = []
 
 let usersPerPage = 10
@@ -8,7 +11,42 @@ let page = 0
 
 document.addEventListener("DOMContentLoaded", async ()=> {
 
-     const response = await apiRequest(`admin/see-users/${page}/${usersPerPage}`)
+   page = 0
+    loadPage()
+
+
+
+});
+
+nextButton.addEventListener("click", loadNextPage)
+previousButton.addEventListener("click", loadPreviousPage)
+pageSelector.addEventListener("change", loadSpecifiedPage)
+
+function loadNextPage(){
+    page += 1
+    pageSelector.value = page
+    loadPage()
+}
+
+function loadPreviousPage(){
+    page -= 1
+    if(page < 0){
+        page = 0
+    }
+    pageSelector.value = page
+    loadPage()
+}
+
+function loadSpecifiedPage(){
+    page = Number(pageSelector.value)
+    if(page < 0){
+        page = 0
+    }
+    loadPage()
+}
+
+async function loadPage(){
+    const response = await apiRequest(`admin/see-users/${page}/${usersPerPage}`)
 
     if (response.status !== 200) {
         const errorMessage = document.getElementById("errorMessage");
@@ -24,21 +62,52 @@ document.addEventListener("DOMContentLoaded", async ()=> {
 
     for(const user of users){
         const row = document.createElement("tr")
+        row.classList.add(
+            "odd:bg-white",
+            "even:bg-white/95"
+        );
+
 
         //id cell:
         const idCell = document.createElement("td")
         idCell.textContent = user.id
         row.appendChild(idCell)
+        idCell.classList.add(
+            "px-6",
+            "py-6",
+            "text-center",
+            "text-lg",
+            "border-t",
+            "border-purple-400"
+        );
+        idCell.classList.add("border-l", "border-purple-400");
 
         //username cell
         const usernameCell = document.createElement("td")
         usernameCell.textContent = user.username
         row.appendChild(usernameCell)
+        usernameCell.classList.add(
+            "px-6",
+            "py-6",
+            "text-center",
+            "text-lg",
+            "border-t",
+            "border-purple-400"
+        );
+
 
         //email cell
         const emailCell = document.createElement("td")
         emailCell.textContent = user.email
         row.appendChild(emailCell)
+        emailCell.classList.add(
+            "px-6",
+            "py-6",
+            "text-center",
+            "text-lg",
+            "border-t",
+            "border-purple-400"
+        );
 
         //edit button
         const editButtonCell = document.createElement("td")
@@ -46,6 +115,32 @@ document.addEventListener("DOMContentLoaded", async ()=> {
         editButton.textContent = "Edit"
         editButtonCell.appendChild(editButton)
         row.appendChild(editButtonCell)
+        editButtonCell.classList.add(
+            "px-6",
+            "py-6",
+            "text-center",
+            "text-lg",
+            "border-t",
+            "border-purple-400"
+        );
+        editButton.classList.add(
+            "inline-block",
+            "px-6",
+            "py-2",
+            "rounded-full",
+            "text-sm",
+            "font-semibold",
+            "shadow-md",
+            "transition",
+            "transform",
+            "hover:-translate-y-0.5",
+            "bg-gradient-to-r",
+            "from-indigo-300",
+            "to-indigo-200",
+            "text-indigo-900",
+            "ring-1",
+            "ring-indigo-200"
+        );
 
         //delete button
         const deleteButtonCell = document.createElement("td")
@@ -53,7 +148,33 @@ document.addEventListener("DOMContentLoaded", async ()=> {
         deleteButton.textContent = "Delete"
         deleteButtonCell.appendChild(deleteButton)
         row.appendChild(deleteButtonCell)
-
+        deleteButtonCell.classList.add(
+            "px-6",
+            "py-6",
+            "text-center",
+            "text-lg",
+            "border-t",
+            "border-purple-400"
+        );
+        deleteButtonCell.classList.add("border-r", "border-purple-400");
+        deleteButton.classList.add(
+            "inline-block",
+            "px-6",
+            "py-2",
+            "rounded-full",
+            "text-sm",
+            "font-semibold",
+            "shadow-md",
+            "transition",
+            "transform",
+            "hover:-translate-y-0.5",
+            "bg-gradient-to-r",
+            "from-red-500",
+            "to-red-400",
+            "text-white",
+            "ring-1",
+            "ring-red-300"
+        );
 
         userTable.appendChild(row)
         //TODO: Add edit and delete functionality
@@ -61,10 +182,7 @@ document.addEventListener("DOMContentLoaded", async ()=> {
 
 
     }
-
-
-
-});
+}
 
 
 

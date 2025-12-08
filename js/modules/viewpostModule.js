@@ -1,11 +1,9 @@
 export function createPostElement(post, options = {}) {
-    const { showFollowButton = true } = options;
+    const { showFollowButton = true, currentUserId } = options;
 
-    // Wrapper to center the post
     const postWrapper = document.createElement("div");
     postWrapper.classList.add("w-full", "flex", "justify-center", "mb-6");
 
-    // Post container
     const postElement = document.createElement("div");
     postElement.classList.add(
         "flex", "flex-col", "items-start",
@@ -13,7 +11,7 @@ export function createPostElement(post, options = {}) {
         "w-full", "max-w-[700px]", "mx-auto"
     );
 
-    // Header: profile picture + username + follow button
+    // Header
     const headerDiv = document.createElement("div");
     headerDiv.classList.add("flex", "items-center", "gap-4", "w-full");
 
@@ -21,12 +19,10 @@ export function createPostElement(post, options = {}) {
     const profileImg = document.createElement("img");
     profileImg.src = post.img;
     profileImg.alt = "Profile Picture";
-    // Force exact size like profile posts
     profileImg.classList.add("rounded-full", "object-cover");
-    profileImg.style.width = "48px";  // 12 * 4 = 48px
+    profileImg.style.width = "48px";
     profileImg.style.height = "48px";
     profileImg.style.flexShrink = "0";
-
     headerDiv.appendChild(profileImg);
 
     // Username
@@ -42,16 +38,39 @@ export function createPostElement(post, options = {}) {
             "bg-blue-500", "hover:bg-blue-600", "text-white",
             "font-semibold", "px-2", "py-1", "rounded-full", "ml-auto"
         );
-        followButton.textContent = "Follow";
+
+        let isFollowing = post.following ?? false;
+        followButton.textContent = isFollowing ? "Unfollow" : "Follow";
+
+        followButton.addEventListener("click", () => {
+            if (!currentUserId) {
+                alert("You must be logged in to follow");
+                return;
+            }
+
+            const action = isFollowing ? "unfollow" : "follow";
+            const method = isFollowing ? "DELETE" : "POST";
+
+            fetch(`http://localhost:8080/follows/${currentUserId}/${action}/${post.profileId}`, { method })
+                .then(res => {
+                    if (!res.ok) throw new Error("Failed to follow/unfollow");
+                    isFollowing = !isFollowing;
+                    followButton.textContent = isFollowing ? "Unfollow" : "Follow";
+                })
+                .catch(err => console.error(err));
+        });
+
         headerDiv.appendChild(followButton);
-    }
+
+
+}
 
     postElement.appendChild(headerDiv);
 
-    // Media image
+    // Media
     if (post.media?.path) {
         const mediaWrapper = document.createElement("div");
-        mediaWrapper.classList.add("w-full", "flex", "justify-center"); // centers children
+        mediaWrapper.classList.add("w-full", "flex", "justify-center");
 
         const mediaImg = document.createElement("img");
         mediaImg.src = post.media.path;
@@ -65,8 +84,7 @@ export function createPostElement(post, options = {}) {
         postElement.appendChild(mediaWrapper);
     }
 
-
-    // Post content
+    // Content
     const content = document.createElement("p");
     content.classList.add("mt-2", "text-gray-700", "text-sm");
     content.textContent = post.content;

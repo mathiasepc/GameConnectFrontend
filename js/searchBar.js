@@ -71,7 +71,7 @@ function displayResults(results) {
         `;
 
         item.addEventListener("click", () => {
-            window.location.href = `../viewprofile.html?id=${r.userId}`;
+            window.location.href = `../html/viewprofile.html?id=${r.userId}`;
 
         });
 

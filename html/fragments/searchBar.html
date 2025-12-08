@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>searchBar</title>
+    <link href="/css/output.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+</head>
+<body>
+<div class="w-4/12 flex justify-self-center items-center bg-white rounded-full border border-blue-200 px-6 py-1 shadow-sm gap-4 m-2.5 ">
+    <label for="textContent"></label>
+<input type="text" placeholder="Search here..." id="textContent" class="flex-grow text-gray-700 placeholder-gray-400 text-lg focus:outline-none">
+<button type="submit"
+        id="searchButton"
+        class="hover:text-blue-500 transition">
+    <i class="fa-solid fa-magnifying-glass"></i></button>
+</div>
+
+<div id="searchResults"
+     class="w-4/12 mx-auto bg-white border border-gray-200 rounded-xl mt-2 shadow-md hidden">
+</div>
+
+
+<script src="/js/searchBar.js"></script>
+
+</body>
+</html>

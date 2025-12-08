@@ -4,8 +4,17 @@ const userTable = document.getElementById("user-table-tbody")
 const nextButton = document.getElementById("next-button")
 const previousButton = document.getElementById("previous-button")
 const pageSelector = document.getElementById("page-selector")
-const users = []
 
+const deleteModal = document.getElementById("delete-modal")
+const dmDisplayText = document.getElementById("dm-display-text")
+const cancelDelete = document.getElementById("cancel-delete")
+const confirmDelete = document.getElementById("confirm-delete")
+const deleteInput = document.getElementById("delete-input")
+const deleteWrongInputText = document.getElementById("delete-wrong-input-text")
+let deletingUserID = null
+let deletingUsername = null
+
+const users = []
 let usersPerPage = 10
 let page = 0
 
@@ -147,6 +156,8 @@ async function loadPage(){
         const deleteButton = document.createElement("button")
         deleteButton.textContent = "Delete"
         deleteButtonCell.appendChild(deleteButton)
+        deleteButton.value = user.id
+        deleteButton.addEventListener("click", () => openDeleteModal(deleteButton.value))
         row.appendChild(deleteButtonCell)
         deleteButtonCell.classList.add(
             "px-6",
@@ -181,6 +192,42 @@ async function loadPage(){
 
 
 
+    }
+}
+
+function openDeleteModal(userID){
+    deleteModal.classList.remove("hidden")
+    let username = ""
+    for(const user of users){
+        if (userID == user.id){
+            username = user.username
+        }
+    }
+    deletingUserID = userID
+    deletingUsername = username
+    dmDisplayText.textContent = "In order to confirm deletion, please type " + username +"'s username in the input field and press confirm."
+
+}
+
+cancelDelete.addEventListener("click", closeDeleteModal)
+
+function closeDeleteModal(){
+    deleteModal.classList.add("hidden")
+    deleteWrongInputText.classList.remove("hidden")
+    deleteWrongInputText.classList.add("hidden")
+}
+
+confirmDelete.addEventListener("click", onConfirmDelete)
+
+async function onConfirmDelete(){
+    if(deleteInput.value == deletingUsername){
+        closeDeleteModal()
+        //call the backend and delete user here
+        console.log("hello from on confirm delete")
+        const response = await apiRequest(`admin/delete-user/?id=${deletingUserID}`, "DELETE")
+        loadPage()
+    }else{
+        deleteWrongInputText.classList.remove("hidden")
     }
 }
 

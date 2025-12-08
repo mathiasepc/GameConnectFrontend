@@ -50,7 +50,7 @@ async function runSearch() {
 
 function displayResults(results) {
     const box = document.querySelector("#searchResults");
-    box.innerHTML = ""; // reset
+    box.innerHTML = "";
 
     if (results.length === 0) {
         box.classList.remove("hidden");
@@ -65,7 +65,7 @@ function displayResults(results) {
         item.className = "p-3 flex items-center gap-3 hover:bg-gray-100 cursor-pointer";
 
         item.innerHTML = `
-            <img src="${r.profileImage || '/img/default.png'}"
+            <img src="${r.profileImage || '/img/defaultProfile.png'}"
                  class="w-10 h-10 rounded-full object-cover">
             <span class="font-medium">${r.username}</span>
         `;

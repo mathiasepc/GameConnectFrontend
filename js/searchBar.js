@@ -1,14 +1,18 @@
 const searchInput = document.querySelector("#textContent");
 const searchButton = document.querySelector("#searchButton");
 
+const box = document.querySelector("#searchResults");
+
+
 const BASE_URL = "http://localhost:8080/search/searchProfiles/";
 
-// Listen when user presses Enter
-searchInput.addEventListener("keypress", (event) => {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        runSearch();
+// Listen when user presses types
+searchInput.addEventListener("input", (event) => {
+    if (searchInput.value.trim() === "") {
+        box.classList.add("hidden");
+        return;
     }
+        runSearch();
 });
 
 // Listen when user clicks the magnifying glass
@@ -16,6 +20,7 @@ searchButton.addEventListener("click", (event) => {
     event.preventDefault();
     runSearch();
 });
+
 
 async function runSearch() {
     console.log("Searching...");
@@ -49,7 +54,6 @@ async function runSearch() {
 }
 
 function displayResults(results) {
-    const box = document.querySelector("#searchResults");
     box.innerHTML = "";
 
     if (results.length === 0) {

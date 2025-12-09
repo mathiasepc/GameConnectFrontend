@@ -1,12 +1,13 @@
 import { createPostElement } from "./modules/viewpostModule.js";
 
 const timeline = document.getElementById("postsContainer");
+const currentUserId = 1
 
 document.addEventListener("DOMContentLoaded", loadPosts);
 
 async function loadPosts() {
     try {
-        const response = await fetch("http://localhost:8080/timeline/posts");
+        const response = await fetch(`http://localhost:8080/timeline/posts/${currentUserId}`)
         if (!response.ok) throw new Error("Could not load posts");
 
         const posts = await response.json();

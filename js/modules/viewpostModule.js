@@ -31,39 +31,6 @@ export function createPostElement(post, options = {}) {
     username.textContent = post.username;
     headerDiv.appendChild(username);
 
-    // Follow button
-    if (showFollowButton) {
-        const followButton = document.createElement("button");
-        followButton.classList.add(
-            "bg-blue-500", "hover:bg-blue-600", "text-white",
-            "font-semibold", "px-2", "py-1", "rounded-full", "ml-auto"
-        );
-
-        let isFollowing = post.following ?? false;
-        followButton.textContent = isFollowing ? "Unfollow" : "Follow";
-
-        followButton.addEventListener("click", () => {
-            if (!currentUserId) {
-                alert("You must be logged in to follow");
-                return;
-            }
-
-            const action = isFollowing ? "unfollow" : "follow";
-            const method = isFollowing ? "DELETE" : "POST";
-
-            fetch(`http://localhost:8080/follows/${currentUserId}/${action}/${post.profileId}`, { method })
-                .then(res => {
-                    if (!res.ok) throw new Error("Failed to follow/unfollow");
-                    isFollowing = !isFollowing;
-                    followButton.textContent = isFollowing ? "Unfollow" : "Follow";
-                })
-                .catch(err => console.error(err));
-        });
-
-        headerDiv.appendChild(followButton);
-
-
-}
 
     postElement.appendChild(headerDiv);
 
@@ -86,9 +53,48 @@ export function createPostElement(post, options = {}) {
 
     // Content
     const content = document.createElement("p");
-    content.classList.add("mt-2", "text-gray-700", "text-sm");
+    content.classList.add(
+        "mt-2",
+        "text-gray-700",
+        "text-sm",
+        "bg-white",
+        "border",
+        "border-blue-400",
+        "rounded-xl",     // nice rounded bubble
+        "px-4",
+        "py-2",
+        "w-full",         // <<< match media width
+        "break-words"
+    );
+
     content.textContent = post.content;
     postElement.appendChild(content);
+
+
+
+    //Tags
+    // Tags container
+    const tagsContainer = document.createElement("div");
+    tagsContainer.classList.add("mt-2", "flex", "flex-wrap", "gap-2");
+
+    // Create each tag badge
+    post.tags.forEach(t => {
+        const badge = document.createElement("span");
+        badge.textContent = t.name;
+        badge.classList.add(
+            "px-2",
+            "py-0.5",
+            "bg-gray-200",
+            "text-gray-600",
+            "rounded-full",
+            "text-xs",          // smaller text
+            "font-medium"
+        );
+        tagsContainer.appendChild(badge);
+    });
+
+    postElement.appendChild(tagsContainer);
+
 
     postWrapper.appendChild(postElement);
     return postWrapper;

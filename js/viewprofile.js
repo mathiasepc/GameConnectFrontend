@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(profile => {
             console.log(profile);
 
-            // Profile info
             document.getElementById("username").textContent = profile.username;
             document.getElementById("bio").textContent = profile.bio;
             document.getElementById("img").src = profile.img;
@@ -20,13 +19,11 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("followersCount").textContent = profile.followers;
             document.getElementById("followingCount").textContent = profile.followings;
 
-
-            // Follow button for profile
             const followButton = document.getElementById("followButton");
             if(currentUserId === profile.id) {
                 followButton.hidden = true
             }
-            let isFollowing = profile.following ?? false; // backend should send this
+            let isFollowing = profile.following ?? false;
             let followersCount = profile.followers
 
             followButton.textContent = isFollowing ? "Unfollow" : "Follow";
@@ -46,12 +43,90 @@ document.addEventListener("DOMContentLoaded", () => {
                         isFollowing = !isFollowing;
                         followButton.textContent = isFollowing ? "Unfollow" : "Follow";
 
-                        // Optional: update followers count
                         followersCount += isFollowing ? 1 : -1;
                         document.getElementById("followersCount").textContent = followersCount;
                     })
                     .catch(err => console.error(err));
             });
+
+            //Following
+            const followersContainer = document.getElementById("followersContainer");
+            const followingContainer = document.getElementById("followingContainer");
+            const followersPopup = document.getElementById("followersPopup");
+            const followersList = document.getElementById("followersList");
+            const popupTitle = document.getElementById("popupTitle");
+            const closeFollowers = document.getElementById("closeFollowers");
+
+            followersContainer.addEventListener("click", () => {
+                popupTitle.textContent = "Followers";
+                fetch(`http://localhost:8080/follows/${userId}/followers`)
+                    .then(res => res.json())
+                    .then(followers => {
+                        followersList.innerHTML = "";
+                        followers.forEach(f => {
+                            const li = document.createElement("li");
+                            li.classList.add(
+                                "flex", "items-center", "gap-2",
+                                "p-1", "rounded", "hover:bg-gray-100"
+                            );
+
+                            const img = document.createElement("img");
+                            img.src = f.img;
+                            img.alt = f.username;
+                            img.classList.add("w-6", "h-6", "rounded-full", "object-cover");
+
+                            const usernameText = document.createElement("span");
+                            usernameText.textContent = f.username;
+                            usernameText.classList.add("text-sm", "font-medium");
+
+                            li.appendChild(img);
+                            li.appendChild(usernameText);
+
+                            followersList.appendChild(li);
+                        });
+                        followersPopup.classList.remove("hidden");
+                    })
+                    .catch(err => console.error(err));
+            });
+
+
+            followingContainer.addEventListener("click", () => {
+                popupTitle.textContent = "Following";
+                fetch(`http://localhost:8080/follows/${userId}/following`)
+                    .then(res => res.json())
+                    .then(following => {
+                        followersList.innerHTML = "";
+                        following.forEach(f => {
+                            const li = document.createElement("li");
+                            li.classList.add(
+                                "flex", "items-center", "gap-2",
+                                "p-1", "rounded", "hover:bg-gray-100"
+                            );
+
+                            const img = document.createElement("img");
+                            img.src = f.img;
+                            img.alt = f.username;
+                            img.classList.add("w-6", "h-6", "rounded-full", "object-cover");
+
+                            const usernameText = document.createElement("span");
+                            usernameText.textContent = f.username;
+                            usernameText.classList.add("text-sm", "font-medium");
+
+                            li.appendChild(img);
+                            li.appendChild(usernameText);
+
+                            followersList.appendChild(li);
+                        });
+                        followersPopup.classList.remove("hidden");
+                    })
+                    .catch(err => console.error(err));
+            });
+
+
+            closeFollowers.addEventListener("click", () => {
+                followersPopup.classList.add("hidden");
+            });
+
 
             // Posts
             const postsContainer = document.getElementById("postsContainer");

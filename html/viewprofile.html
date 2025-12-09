@@ -32,9 +32,24 @@
       <!-- Stats: Posts / Following / Followers -->
       <div class="flex space-x-6 mt-2 text-gray-700 text-sm">
         <div><span id="postsCount" class="font-semibold">0</span> Posts</div>
-        <div><span id="followingCount" class="font-semibold">0</span> Following</div>
-        <div><span id="followersCount" class="font-semibold">0</span> Followers</div>
+        <div id="followingContainer" class="cursor-pointer">
+          <span id="followingCount" class="font-semibold">0</span> Following
+        </div>
+        <div id="followersContainer" class="cursor-pointer">
+          <span id="followersCount" class="font-semibold">0</span> Followers
+        </div>
+
       </div>
+
+      <!-- Followers popup -->
+      <div id="followersPopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div class="bg-white p-4 rounded-lg w-80 max-h-96 overflow-y-auto">
+          <h2 id="popupTitle" class="text-lg font-semibold mb-2">Followers</h2>
+          <ul id="followersList" class="space-y-2"></ul>
+          <button id="closeFollowers" class="mt-2 bg-gray-300 hover:bg-gray-400 px-3 py-1 rounded">Close</button>
+        </div>
+      </div>
+
 
       <!-- Bio -->
       <p id="bio" class="mt-4 text-gray-700 text-sm"></p>

@@ -12,7 +12,9 @@ searchInput.addEventListener("input", (event) => {
         box.classList.add("hidden");
         return;
     }
+        setTimeout(() => {
         runSearch();
+}, 500);
 });
 
 // Listen when user clicks the magnifying glass

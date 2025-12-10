@@ -1,0 +1,42 @@
+import {apiRequest, readyFormData} from "./modules/apiRequest.js";
+
+const loginBtn = document.getElementById("loginBtn");
+
+loginBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    // Reset error messages
+    document.querySelectorAll("[role='alert']")
+        .forEach(span => span.textContent = "");
+
+    const form = document.getElementById("loginForm");
+
+    const userLogin = readyFormData(form);
+
+    apiRequest("auth/login", "POST", userLogin).then(response => {
+            if (response.status === 401) {
+                const invalidEl = document.getElementById("wrongCredentialsError");
+                invalidEl.textContent = "Wrong email or password.";
+                return;
+            }
+
+            if (response.status === 400) {
+                const error = JSON.parse(response.data);
+
+                Object.entries(error).forEach(([key, value]) => {
+                    const el = document.getElementById(`${key}Error`);
+                    if (el) el.textContent = value;
+                });
+
+                return;
+            }
+
+            const token = response.data;
+
+            localStorage.setItem("user", token);
+            window.location.href = "../html/timeLine.html";
+        }
+    );
+
+});
+

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
+    <link rel="stylesheet" href="../css/output.css">
 </head>
 <body class="min-h-screen flex items-center bg-cover bg-center"
       style="background-image: url('../image/LogIn-BG.png');">
@@ -25,6 +26,7 @@
                     class="w-full max-w-sm space-y-5 text-sky-700"
                     action="#"
                     method="post"
+                    id="loginForm"
             >
                 <!-- Email -->
                 <div class="space-y-2">
@@ -35,6 +37,8 @@
                             placeholder="Email@email.com"
                             class="w-full rounded-full bg-white/70 border border-white/60 px-6 py-3 text-sm shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-transparent"
                     />
+                    <span id="emailError" role="alert"
+                          class="text-red-500 text-sm ml-3 mt-1"></span>
                 </div>
 
                 <!-- Password + forgot -->
@@ -46,6 +50,10 @@
                             placeholder="Password"
                             class="w-full rounded-full bg-white/70 border border-white/60 px-6 py-3 text-sm shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-transparent"
                     />
+                    <span id="passwordError" role="alert"
+                          class="text-red-500 text-sm ml-3 mt-1"></span>
+                    <span id="wrongCredentialsError" role="alert"
+                          class="text-red-500 text-sm ml-3 mt-1"></span>    
                     <div class="flex justify-end">
                         <a href="#"
                            class="text-xs text-sky-400 hover:text-sky-500 hover:underline">
@@ -58,12 +66,14 @@
                 <div class="flex items-center gap-4 pt-2">
                     <button
                             type="submit"
+                            id="loginBtn"
                             class="flex-1 rounded-full border border-sky-400 bg-white px-6 py-2 text-sm font-medium text-sky-500 shadow-sm hover:bg-sky-50 focus:outline-none focus:ring-2 focus:ring-sky-300"
                     >
                         Sign in
                     </button>
                     <button
                             type="button"
+                            id="registerBtn"
                             class="flex-1 rounded-full bg-sky-500 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-300"
                     >
                         Register
@@ -77,4 +87,5 @@
 
 
 </body>
+<script type="module" src="../js/user-login.js"></script>
 </html>

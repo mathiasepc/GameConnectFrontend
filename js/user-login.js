@@ -1,9 +1,18 @@
 import {apiRequest, readyFormData} from "./modules/apiRequest.js";
 
 const loginBtn = document.getElementById("loginBtn");
+const registerBtn = document.getElementById("registerBtn");
+
+registerBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    window.location.href = "../html/user-registration.html";
+});
+
 
 loginBtn.addEventListener("click", async (e) => {
     e.preventDefault();
+    if(e.target.type !== "submit") return;
 
     // Reset error messages
     document.querySelectorAll("[role='alert']")
@@ -32,6 +41,8 @@ loginBtn.addEventListener("click", async (e) => {
             }
 
             const token = response.data;
+
+            console.log(token);
 
             localStorage.setItem("user", token);
             window.location.href = "../html/timeLine.html";

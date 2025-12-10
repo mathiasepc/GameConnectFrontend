@@ -42,8 +42,6 @@ loginBtn.addEventListener("click", async (e) => {
 
             const token = response.data;
 
-            console.log(token);
-
             localStorage.setItem("user", token);
             window.location.href = "../html/timeLine.html";
         }

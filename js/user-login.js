@@ -13,22 +13,30 @@ loginBtn.addEventListener("click", async (e) => {
 
     const userLogin = readyFormData(form);
 
-    const response = await apiRequest("auth/login", "POST", userLogin);
+    apiRequest("auth/login", "POST", userLogin).then(response => {
+            if (response.status === 401) {
+                const invalidEl = document.getElementById("wrongCredentialsError");
+                invalidEl.textContent = "Wrong email or password.";
+                return;
+            }
 
-    if(response.status === 401){
-        const invalidEl = document.getElementById("wrongCredentialsError");
-        invalidEl.textContent = "Wrong email or password.";
-    }
+            if (response.status === 400) {
+                const error = JSON.parse(response.data);
 
-    if (response.status === 400) {
-        const error = JSON.parse(response.data);
+                Object.entries(error).forEach(([key, value]) => {
+                    const el = document.getElementById(`${key}Error`);
+                    if (el) el.textContent = value;
+                });
 
-        Object.entries(error).forEach(([key, value]) => {
-            const el = document.getElementById(`${key}Error`);
-            if (el) el.textContent = value;
-        });
-    }
+                return;
+            }
 
-    console.log(response);
+            const token = response.data;
+
+            localStorage.setItem("user", token);
+            window.location.href = "../html/timeLine.html";
+        }
+    );
+
 });
 

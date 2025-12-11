@@ -1,0 +1,45 @@
+#gamesCarouselWrapper {
+    position: relative;
+    max-width: 750px; /* slightly smaller container */
+    margin: 0 auto;
+    overflow: hidden;
+    padding: 0.25rem 0; /* less vertical padding */
+}
+
+#gamesCarousel {
+    display: flex;
+    gap: 1rem; /* space between games */
+    scroll-behavior: smooth;
+    overflow-x: auto;
+    padding: 0.25rem 0; /* smaller top/bottom padding */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+}
+
+#gamesCarousel::-webkit-scrollbar {
+    display: none;
+}
+
+#gamesCarousel > div {
+    flex: 0 0 25%; /* 4 items per view */
+    box-sizing: border-box;
+    text-align: center;
+}
+
+#gamesCarousel img {
+    width: 100%;
+    height: 140px;       /* adjust height as needed */
+    border-radius: 0.5rem;
+    object-fit: contain; /* fit whole image */
+    background-color: transparent; /* same as page background */
+    padding: 0.25rem;
+}
+
+
+#gamesCarousel div div {
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

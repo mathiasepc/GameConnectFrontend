@@ -28,7 +28,7 @@
       <!-- Username + Follow Button -->
       <div class="flex items-center justify-start gap-40">
         <h1 id="username" class="text-2xl font-semibold text-gray-800">Username</h1>
-        <button id="followButton" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-1 rounded-full">
+        <button id="followButton" class="bg-sky-400 hover:bg-sky-500 text-white font-semibold px-4 py-1 rounded-full">
           Follow
         </button>
       </div>
@@ -62,7 +62,7 @@
   <!-- Favorite Games Section -->
   <div class="mt-6 relative w-full max-w-4xl mx-auto">
 
-    <h2 class="text-lg font-semibold text-gray-800 mb-4 text-center">Favorite Games</h2>
+
 
     <!-- Add Game Input -->
     <div id="addGameSection" class="mb-4 text-center relative">
@@ -70,11 +70,11 @@
               type="text"
               id="favoriteGameInput"
               placeholder="Add a game to your favorites..."
-              class="border border-gray-300 rounded px-3 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              class="border border-blue-500 rounded px-3 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-blue-400"
       />
       <button
               id="addGameButton"
-              class="ml-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+              class="ml-2 bg-sky-400 hover:bg-sky-500 text-white px-4 py-2 rounded"
       >
         Add Game
       </button>
@@ -87,14 +87,22 @@
       <!-- Dropdown for game search results -->
       <div
               id="favoriteGameDropdown"
-              class="absolute mt-1 w-64 bg-white border border-gray-300 rounded shadow-lg hidden z-50"
+              class="absolute top-full left-0 w-full
+                                bg-gradient-to-b from-blue-100 via-white to-purple-100
+                                border-2 border-blue-500
+                                rounded-lg shadow-lg
+                                p-2
+                                z-50 hidden
+                                max-h-60 overflow-y-auto"
       ></div>
+
     </div>
+    <h2 class="text-lg font-semibold text-gray-800 mb-4 text-center">Favorite Games</h2>
 
     <!-- Carousel wrapper -->
     <div class="relative bg-white border-2 border-white rounded-lg shadow-md overflow-hidden" id="gamesCarouselWrapper">
       <button id="gamesPrev"
-              class="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-blue-500 text-white px-3 py-2 rounded-full hover:bg-blue-600">
+              class="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-sky-400 text-white px-3 py-2 rounded-full hover:bg-sky-500">
         &#8592;
       </button>
 
@@ -103,7 +111,7 @@
       </div>
 
       <button id="gamesNext"
-              class="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-blue-500 text-white px-3 py-2 rounded-full hover:bg-blue-600">
+              class="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-sky-400 text-white px-3 py-2 rounded-full hover:bg-sky-500">
         &#8594;
       </button>
     </div>

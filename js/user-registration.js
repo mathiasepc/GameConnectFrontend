@@ -33,6 +33,20 @@ btn.addEventListener("click", async (e) => {
 
     console.log(userRegistration)
 
+    let hasError = false;
+
+    if (!userRegistration.img) {
+        document.getElementById("pictureError").textContent = "Profile picture is required!";
+        hasError = true;
+    }
+
+    if (!userRegistration.gameId || !userRegistration.gameName) {
+        document.getElementById("favoriteGameError").textContent = "Favorite game is required!";
+        hasError = true;
+    }
+
+    if (hasError) return;
+
     const response = await apiRequest("users", "POST", userRegistration);
 
     if (response.status === 400) {
@@ -47,7 +61,6 @@ btn.addEventListener("click", async (e) => {
         } else {
             document.getElementById("repeatPasswordError").textContent = "";
         }
-        return;
     }
 
     if (response.status === 200) alert("User created successfully! userid: " + response.data.id);

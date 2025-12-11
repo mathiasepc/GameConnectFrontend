@@ -97,5 +97,124 @@ export function createPostElement(post, options = {}) {
 
 
     postWrapper.appendChild(postElement);
+
+    // --- Action Buttons Row ---
+    const actionRow = document.createElement("div");
+    actionRow.classList.add(
+        "flex", "items-center", "gap-6", "mt-3",
+        "text-xl", "text-gray-700"
+    );
+
+// Like button
+    const likeBtn = document.createElement("button");
+    likeBtn.type = "button";
+    likeBtn.classList.add("hover:text-blue-500", "transition");
+
+    likeBtn.innerHTML = `<i class="fa-regular fa-heart"></i>`;
+
+    likeBtn.addEventListener("click", () => {
+        console.log("Like clicked for post:", post.id);
+        // TODO: integrate backend call POST /posts/{id}/like
+    });
+
+    actionRow.appendChild(likeBtn);
+
+// Comment button
+    const commentBtn = document.createElement("button");
+    commentBtn.type = "button";
+    commentBtn.classList.add("hover:text-blue-500", "transition");
+
+    commentBtn.innerHTML = `<i class="fa-regular fa-comment"></i>`;
+
+    commentBtn.addEventListener("click", () => {
+        commentSection.classList.toggle("hidden");
+        if (!commentSection.classList.contains("hidden")) {
+            commentInput.focus()
+        }
+        console.log("Comment clicked for post:", post.id);
+    });
+
+
+    actionRow.appendChild(commentBtn);
+
+// Add row to post
+    postElement.appendChild(actionRow);
+
+    // --- Comment Input Section (hidden by default) ---
+    const commentSection = document.createElement("div");
+    commentSection.classList.add("w-full", "mt-3", "hidden", "flex", "items-center", "gap-2");
+
+// Comment input
+    const commentInput = document.createElement("input");
+    commentInput.type = "text";
+    commentInput.placeholder = "Write a comment...";
+    commentInput.classList.add(
+        "flex-grow", "border", "border-gray-300",
+        "rounded-full", "px-4", "py-2", "text-sm",
+        "focus:outline-none"
+    );
+
+// Submit button
+    const submitCommentBtn = document.createElement("button");
+    submitCommentBtn.classList.add(
+        "bg-blue-500", "hover:bg-blue-600",
+        "text-white", "px-4", "py-2",
+        "rounded-full", "text-sm"
+    );
+    submitCommentBtn.textContent = "Send";
+
+    submitCommentBtn.addEventListener("click", async () => {
+        const content = commentInput.value.trim();
+        if (!content) return;
+
+        // Read token from local storage
+        const raw = localStorage.getItem("user");
+        const stored = JSON.parse(raw);
+        const token = stored.token;
+
+        // Decode JWT to pull userId
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        const userId = Number(payload.sub);
+
+        const commentDto = {
+            content: content,
+            createdAt: new Date().toISOString(),
+            postId: post.id,
+            userId: userId
+        };
+
+        try {
+            const response = await fetch(`http://localhost:8080/timeline/posts/${post.id}/comment`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify(commentDto)
+            });
+
+            if (!response.ok) throw new Error("Failed to send comment");
+
+            console.log("Comment saved:", await response.json());
+
+            // Reset UI
+            commentInput.value = "";
+            commentSection.classList.add("hidden");
+
+        } catch (err) {
+            console.error(err);
+            alert("Could not send comment.");
+        }
+    });
+
+
+// Add input + button to section
+    commentSection.appendChild(commentInput);
+    commentSection.appendChild(submitCommentBtn);
+
+    postElement.appendChild(commentSection);
+
+
+
     return postWrapper;
 }

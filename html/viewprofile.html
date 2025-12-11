@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <title>Profile Page</title>
-    <link href="../css/output.css" rel="stylesheet"></head>
-<body class="bg-gradient-to-b from-blue-100 via-white to-purple-100 min-h-screen ">
+  <link href="../css/output.css" rel="stylesheet">
+  <link href="../css/carousel.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-b from-blue-100 via-white to-purple-100 min-h-screen">
 
-<div id = "searchBarFragment"></div>
+<div id="searchBarFragment"></div>
 <script src="../js/loadFragment.js"></script>
 
 <!-- Centered container with side padding -->
@@ -26,7 +28,7 @@
       <!-- Username + Follow Button -->
       <div class="flex items-center justify-start gap-40">
         <h1 id="username" class="text-2xl font-semibold text-gray-800">Username</h1>
-        <button id ="followButton" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-1 rounded-full">
+        <button id="followButton" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-1 rounded-full">
           Follow
         </button>
       </div>
@@ -40,7 +42,6 @@
         <div id="followersContainer" class="cursor-pointer">
           <span id="followersCount" class="font-semibold">0</span> Followers
         </div>
-
       </div>
 
       <!-- Followers popup -->
@@ -52,19 +53,67 @@
         </div>
       </div>
 
-
-
       <!-- Bio -->
       <p id="bio" class="mt-4 text-gray-700 text-sm"></p>
 
     </div>
+  </div>
+
+  <!-- Favorite Games Section -->
+  <div class="mt-6 relative w-full max-w-4xl mx-auto">
+
+    <h2 class="text-lg font-semibold text-gray-800 mb-4 text-center">Favorite Games</h2>
+
+    <!-- Add Game Input -->
+    <div id="addGameSection" class="mb-4 text-center relative">
+      <input
+              type="text"
+              id="favoriteGameInput"
+              placeholder="Add a game to your favorites..."
+              class="border border-gray-300 rounded px-3 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      />
+      <button
+              id="addGameButton"
+              class="ml-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+      >
+        Add Game
+      </button>
+
+      <!-- Hidden fields to store selected game info -->
+      <input type="hidden" id="favoriteGameName">
+      <input type="hidden" id="favoriteGameImg">
+      <input type="hidden" id="favoriteGameId">
+
+      <!-- Dropdown for game search results -->
+      <div
+              id="favoriteGameDropdown"
+              class="absolute mt-1 w-64 bg-white border border-gray-300 rounded shadow-lg hidden z-50"
+      ></div>
+    </div>
+
+    <!-- Carousel wrapper -->
+    <div class="relative bg-white border-2 border-white rounded-lg shadow-md overflow-hidden" id="gamesCarouselWrapper">
+      <button id="gamesPrev"
+              class="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-blue-500 text-white px-3 py-2 rounded-full hover:bg-blue-600">
+        &#8592;
+      </button>
+
+      <div id="gamesCarousel">
+        <!-- Game items appended dynamically -->
+      </div>
+
+      <button id="gamesNext"
+              class="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-blue-500 text-white px-3 py-2 rounded-full hover:bg-blue-600">
+        &#8594;
+      </button>
+    </div>
 
 
   </div>
-    <hr class="w-full h-[5rem] border-gray-300"/>
-  <div id="postsContainer"></div>
-</div>
 
+  <!-- Posts Section -->
+  <div id="postsContainer" class="mt-6"></div>
+</div>
 
 <script type="module" src="../js/viewprofile.js"></script>
 </body>

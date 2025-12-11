@@ -27,7 +27,7 @@ btn.addEventListener("click", async (e) => {
     const form = document.getElementById("registrationForm");
     const userRegistration = readyFormData(form);
     userRegistration.img = urlInput.value;
-    userRegistration.game = favoriteGameNameInput.value
+    userRegistration.gameName = favoriteGameNameInput.value
     userRegistration.gameId = Number(favoriteGameIdInput.value)
     userRegistration.gameImg = favoriteGameImgInput.value
 

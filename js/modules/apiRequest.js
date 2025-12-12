@@ -10,7 +10,6 @@ export async function apiRequest(url, method = "GET", data = null) {
     // our base url is http://localhost:8080/
     const baseUrl = `http://localhost:8080/${url}`;
 
-
     // If data has data, we need to set header type to json and stringify data
     if (data) {
         options.headers["Content-Type"] = "application/json";
@@ -37,7 +36,8 @@ export async function apiRequest(url, method = "GET", data = null) {
     }
 }
 
-export function readyFormData(form){
+export function readyFormData(form) {
+    // FormData is dependent on id and name attributes to work properly.
     const plainText = new FormData(form);
     const plainObject = Object.fromEntries(plainText);
     return Object.fromEntries(Object.entries(plainObject)

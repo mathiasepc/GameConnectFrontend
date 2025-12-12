@@ -132,14 +132,14 @@ async function runGameSearch() {
                 div.classList.add("px-3", "py-2", "cursor-pointer", "hover:bg-gray-100", "flex", "items-center", "gap-2");
 
                 div.innerHTML = `
-                    <img src="${game.coverUrl || '/images/default-game.png'}" alt="${game.name}" width="40" class="rounded-sm">
+                    <img src="${game.coverUrl}" alt="${game.name}" width="40" class="rounded-sm">
                     <span>${game.name}</span>
                 `;
 
                 div.addEventListener("click", () => {
                     gameInput.value = game.name;
                     favoriteGameNameInput.value = game.name;
-                    favoriteGameImgInput.value = game.coverUrl ?? "/images/default-game.png";
+                    favoriteGameImgInput.value = game.coverUrl
                     favoriteGameIdInput.value = game.id;
 
                     dropdown.classList.add("hidden");

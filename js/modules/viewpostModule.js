@@ -329,8 +329,5 @@ export function createPostElement(post, options = {}) {
         }
     }
 
-
-
-
     return postWrapper;
 }

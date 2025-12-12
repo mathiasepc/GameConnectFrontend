@@ -1,19 +1,23 @@
 import { createPostElement } from './modules/viewpostModule.js';
+import { getLoggedInUser } from "./modules/auth.js";
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     const URL = "http://localhost:8080/profile";
     const params = new URLSearchParams(window.location.search);
-    const userId = params.get("id");
+    const userId = params.get("id"); // profile viewed
 
-    // TODO: Replace with real logged-in user ID from session/auth
-    const currentUserId = 1;
+    const currentUser = getLoggedInUser();
+    const currentUserId = currentUser?.id ?? null;
 
-    // Elements for carousel
+
     const carousel = document.getElementById("gamesCarousel");
     const prev = document.getElementById("gamesPrev");
     const next = document.getElementById("gamesNext");
 
-    // Elements for adding games
+    const postsContainer = document.getElementById("postsContainer");
+    const followButton = document.getElementById("followButton");
+    const addGameSection = document.getElementById("addGameSection");
+
     const gameInput = document.getElementById("favoriteGameInput");
     const dropdown = document.getElementById("favoriteGameDropdown");
     const favoriteGameNameInput = document.getElementById("favoriteGameName");
@@ -21,38 +25,26 @@ document.addEventListener("DOMContentLoaded", () => {
     const favoriteGameIdInput = document.getElementById("favoriteGameId");
     const addGameButton = document.getElementById("addGameButton");
 
-    // -----------------------------
-    // Carousel Functions
-    // -----------------------------
+
+    // Carousel helpers
     function updateCarouselButtons() {
+        if (!carousel) return;
         if (carousel.scrollWidth <= carousel.clientWidth) {
             prev.style.display = "none";
             next.style.display = "none";
-        }
-
-        if (carousel.scrollLeft <= 0) {
-            prev.style.display = "none";
         } else {
-            prev.style.display = "block";
-        }
-
-        if (Math.ceil(carousel.scrollLeft + carousel.clientWidth) >= carousel.scrollWidth) {
-            next.style.display = "none";
-        } else {
-            next.style.display = "block";
+            prev.style.display = carousel.scrollLeft <= 0 ? "none" : "block";
+            next.style.display = Math.ceil(carousel.scrollLeft + carousel.clientWidth) >= carousel.scrollWidth ? "none" : "block";
         }
     }
 
     function adjustCarouselAlignment() {
-        if (carousel.children.length <= 2) {
-            carousel.style.justifyContent = "center";
-        } else {
-            carousel.style.justifyContent = "flex-start";
-        }
+        if (!carousel) return;
+        carousel.style.justifyContent = carousel.children.length <= 2 ? "center" : "flex-start";
     }
 
     function scrollCarousel(direction) {
-        if (carousel.children.length === 0) return;
+        if (!carousel || carousel.children.length === 0) return;
         const itemWidth = carousel.children[0].offsetWidth + parseInt(getComputedStyle(carousel).gap || 0);
         carousel.scrollBy({ left: itemWidth * direction, behavior: "smooth" });
     }
@@ -61,142 +53,140 @@ document.addEventListener("DOMContentLoaded", () => {
     next.addEventListener("click", () => scrollCarousel(1));
     carousel.addEventListener("scroll", updateCarouselButtons);
 
-    // -----------------------------
+
     // Fetch profile data
-    // -----------------------------
-    fetch(`${URL}/${userId}?currentUserId=${currentUserId}`)
-        .then(res => res.json())
-        .then(profile => {
-            document.getElementById("username").textContent = profile.username;
-            document.getElementById("bio").textContent = profile.bio;
-            document.getElementById("img").src = profile.img;
-            document.getElementById("postsCount").textContent = (profile.posts ?? []).length;
-            document.getElementById("followersCount").textContent = profile.followers;
-            document.getElementById("followingCount").textContent = profile.followings;
+    try {
+        const res = await fetch(`${URL}/${userId}?currentUserId=${currentUserId}`);
+        if (!res.ok) throw new Error("Failed to fetch profile");
 
-            // Display games
-            const existingGameIds = new Set();
-            (profile.games ?? []).forEach(game => {
-                addGameToCarousel(game);
-                existingGameIds.add(String(game.id)); // store as string
-            });
+        const profile = await res.json();
 
-            // Update carousel after initial load
-            adjustCarouselAlignment();
-            updateCarouselButtons();
+        document.getElementById("username").textContent = profile.username;
+        document.getElementById("bio").textContent = profile.bio;
+        document.getElementById("img").src = profile.img;
+        document.getElementById("postsCount").textContent = (profile.posts ?? []).length;
+        document.getElementById("followersCount").textContent = profile.followers;
+        document.getElementById("followingCount").textContent = profile.followings;
 
-            // Follow button
-            const followButton = document.getElementById("followButton");
-            if(currentUserId == profile.id) followButton.hidden = true;
+        (profile.posts ?? []).forEach(post => {
+            const postElement = createPostElement(
+                {
+                    ...post,
+                    img: profile.img,
+                    username: profile.username,
+                    profileId: profile.id,
+                    following: profile.following
+                },
+                { showFollowButton: false, currentUserId }
+            );
+            postsContainer.appendChild(postElement);
+        });
 
-            let isFollowing = profile.following ?? false;
+        // Display games
+        const existingGameIds = new Set();
+        (profile.games ?? []).forEach(game => {
+            addGameToCarousel(game);
+            existingGameIds.add(String(game.id));
+        });
+        adjustCarouselAlignment();
+        updateCarouselButtons();
+
+
+        // Follow button
+        if (!currentUserId || currentUserId === profile.id) {
+            followButton.hidden = true;
+        } else {
+            followButton.hidden = false;
+
+            // Use backend-provided 'followed' field instead of 'following'
+            let isFollowing = profile.followed;
             let followersCount = profile.followers;
+
             followButton.textContent = isFollowing ? "Unfollow" : "Follow";
 
-            followButton.addEventListener("click", () => {
-                if (!currentUserId) {
-                    alert("You must be logged in to follow");
-                    return;
-                }
-
+            followButton.addEventListener("click", async () => {
                 const action = isFollowing ? "unfollow" : "follow";
                 const method = isFollowing ? "DELETE" : "POST";
 
-                fetch(`http://localhost:8080/follows/${currentUserId}/${action}/${profile.id}`, { method })
-                    .then(res => {
-                        if (!res.ok) throw new Error("Failed to follow/unfollow");
-                        isFollowing = !isFollowing;
-                        followButton.textContent = isFollowing ? "Unfollow" : "Follow";
+                try {
+                    const res = await fetch(`http://localhost:8080/follows/${currentUserId}/${action}/${profile.id}`, { method });
+                    if (!res.ok) throw new Error("Follow/unfollow failed");
 
-                        followersCount += isFollowing ? 1 : -1;
-                        document.getElementById("followersCount").textContent = followersCount;
-                    })
-                    .catch(err => console.error(err));
+                    // Toggle state after successful request
+                    isFollowing = !isFollowing;
+                    followButton.textContent = isFollowing ? "Unfollow" : "Follow";
+                    followersCount += isFollowing ? 1 : -1;
+                    document.getElementById("followersCount").textContent = followersCount;
+                } catch (err) {
+                    console.error(err);
+                    alert("Failed to update follow status");
+                }
             });
+        }
 
-            setupFollowersPopup(profile.id);
 
-            // Display posts
-            const postsContainer = document.getElementById("postsContainer");
-            (profile.posts ?? []).forEach(post => {
-                const postElement = createPostElement(
-                    {
-                        ...post,
-                        img: profile.img,
-                        username: profile.username,
-                        profileId: profile.id,
-                        following: profile.following
-                    },
-                    { showFollowButton: false, currentUserId }
-                );
-                postsContainer.appendChild(postElement);
+        setupFollowersPopup(profile.id);
+
+        // Game adding
+        if (currentUserId === profile.id) {
+            setupGameSearch();
+            addGameButton.addEventListener("click", async () => {
+                const gameId = favoriteGameIdInput.value;
+                const gameName = favoriteGameNameInput.value;
+                const gameImg = favoriteGameImgInput.value;
+
+                if (!gameId || !gameName || !gameImg) {
+                    alert("Please select a game from the dropdown.");
+                    return;
+                }
+
+                if (existingGameIds.has(String(gameId))) {
+                    alert("This game is already in your favorites.");
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`${URL}/${currentUserId}/games`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ id: gameId, name: gameName, img: gameImg }),
+                    });
+                    if (!response.ok) throw new Error("Failed to add game");
+
+                    const newGame = { id: gameId, name: gameName, img: gameImg };
+                    addGameToCarousel(newGame);
+                    existingGameIds.add(String(gameId));
+                    adjustCarouselAlignment();
+                    updateCarouselButtons();
+
+                    gameInput.value = "";
+                    favoriteGameIdInput.value = "";
+                    favoriteGameNameInput.value = "";
+                    favoriteGameImgInput.value = "";
+
+                    alert(`${gameName} added to your favorites!`);
+                } catch (err) {
+                    console.error(err);
+                    alert("Failed to add game.");
+                }
             });
+        } else {
+            addGameSection.hidden = true;
+        }
 
-            // Adding games
-            if(currentUserId === profile.id){
-                setupGameSearch();
-                addGameButton.addEventListener("click", async () => {
-                    const gameId = favoriteGameIdInput.value;
-                    const gameName = favoriteGameNameInput.value;
-                    const gameImg = favoriteGameImgInput.value;
+    } catch (err) {
+        console.error(err);
+        postsContainer.innerHTML = "<p class='text-red-500'>Failed to load profile.</p>";
+    }
 
-                    if (!gameId || !gameName || !gameImg) {
-                        alert("Please select a game from the dropdown.");
-                        return;
-                    }
-
-                    if(existingGameIds.has(String(gameId))){
-                        alert("This game is already in your favorites.");
-                        return;
-                    }
-
-                    try {
-                        const response = await fetch(`http://localhost:8080/profile/${currentUserId}/games`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ id: gameId, name: gameName, img: gameImg }),
-                        });
-
-                        if (!response.ok) throw new Error("Failed to add game");
-
-                        const newGame = { id: gameId, name: gameName, img: gameImg };
-                        addGameToCarousel(newGame);
-                        existingGameIds.add(String(gameId));
-
-                        // Update carousel after adding
-                        adjustCarouselAlignment();
-                        updateCarouselButtons();
-
-                        // Clear inputs
-                        gameInput.value = "";
-                        favoriteGameIdInput.value = "";
-                        favoriteGameNameInput.value = "";
-                        favoriteGameImgInput.value = "";
-
-                        alert(`${gameName} added to your favorites!`);
-                    } catch (err) {
-                        console.error(err);
-                        alert("Failed to add game.");
-                    }
-                });
-            } else {
-                document.getElementById("addGameSection").hidden = true;
-            }
-        })
-        .catch(err => console.error(err));
-
-    // -----------------------------
-    // Functions
-    // -----------------------------
-    function addGameToCarousel(game){
+    // Helper functions
+    function addGameToCarousel(game) {
         const div = document.createElement("div");
-        div.innerHTML = `
-            <img src="${game.img}" alt="${game.name}">
-        `;
+        div.innerHTML = `<img src="${game.img}" alt="${game.name}">`;
         carousel.appendChild(div);
     }
 
-    function setupFollowersPopup(profileId){
+    function setupFollowersPopup(profileId) {
         const followersContainer = document.getElementById("followersContainer");
         const followingContainer = document.getElementById("followingContainer");
         const followersPopup = document.getElementById("followersPopup");
@@ -219,14 +209,18 @@ document.addEventListener("DOMContentLoaded", () => {
                         img.alt = u.username;
                         img.classList.add("w-6","h-6","rounded-full","object-cover");
 
-                        const usernameText = document.createElement("span");
-                        usernameText.textContent = u.username;
-                        usernameText.classList.add("text-sm","font-medium");
+                        const usernameLink = document.createElement("a");
+                        usernameLink.href = `viewprofile.html?id=${u.id}`;
+                        usernameLink.textContent = u.username;
+                        usernameLink.classList.add("text-sm", "font-medium", "text-blue-500", "hover:underline");
+
+
 
                         li.appendChild(img);
-                        li.appendChild(usernameText);
+                        li.appendChild(usernameLink);
                         followersList.appendChild(li);
                     });
+
                     followersPopup.classList.remove("hidden");
                 })
                 .catch(err => console.error(err));
@@ -237,7 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
         closeFollowers.addEventListener("click", () => followersPopup.classList.add("hidden"));
     }
 
-    function setupGameSearch(){
+    function setupGameSearch() {
         let debounceTimeout;
 
         async function runSearch() {
@@ -259,13 +253,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         const div = document.createElement("div");
                         div.classList.add("px-3","py-2","cursor-pointer","hover:bg-gray-100","flex","items-center","gap-2");
                         div.innerHTML = `
-                            <img src="${game.coverUrl || '/images/default-game.png'}" alt="${game.name}" width="40" class="rounded-sm">
+                            <img src="${game.coverUrl}" alt="${game.name}" width="40" class="rounded-sm">
                             <span>${game.name}</span>
                         `;
                         div.addEventListener("click", () => {
                             gameInput.value = game.name;
                             favoriteGameNameInput.value = game.name;
-                            favoriteGameImgInput.value = game.coverUrl ?? "/images/default-game.png";
+                            favoriteGameImgInput.value = game.coverUrl;
                             favoriteGameIdInput.value = game.id;
                             dropdown.classList.add("hidden");
                         });

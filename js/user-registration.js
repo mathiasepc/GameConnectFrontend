@@ -21,17 +21,15 @@ btn.addEventListener("click", async (e) => {
     e.preventDefault();
     if (e.target.type !== "submit") return;
 
-    // Reset error messages
     document.querySelectorAll("[role='alert']").forEach(span => span.textContent = "");
 
     const form = document.getElementById("registrationForm");
     const userRegistration = readyFormData(form);
-    userRegistration.img = urlInput.value;
-    userRegistration.gameName = favoriteGameNameInput.value
-    userRegistration.gameId = Number(favoriteGameIdInput.value)
-    userRegistration.gameImg = favoriteGameImgInput.value
 
-    console.log(userRegistration)
+    userRegistration.img = urlInput.value;
+    userRegistration.gameName = favoriteGameNameInput.value;
+    userRegistration.gameId = Number(favoriteGameIdInput.value);
+    userRegistration.gameImg = favoriteGameImgInput.value;
 
     let hasError = false;
 
@@ -51,6 +49,7 @@ btn.addEventListener("click", async (e) => {
 
     if (response.status === 400) {
         const error = JSON.parse(response.data);
+
         Object.entries(error).forEach(([key, value]) => {
             const el = document.getElementById(`${key}Error`);
             if (el) el.textContent = value;
@@ -58,14 +57,37 @@ btn.addEventListener("click", async (e) => {
 
         if (userRegistration.password !== userRegistration.repeatPassword) {
             document.getElementById("repeatPasswordError").textContent = "Passwords do not match!";
-        } else {
-            document.getElementById("repeatPasswordError").textContent = "";
         }
+
+        return;
     }
 
-    if (response.status === 200) alert("User created successfully! userid: " + response.data.id);
-    else alert("Response: " + response.data);
+
+    if (response.status === 200) {
+        alert("User created successfully! userid: " + response.data.id);
+
+        // Auto-login
+        const loginPayload = {
+            email: userRegistration.email,
+            password: userRegistration.password
+        };
+
+        const loginResponse = await apiRequest("auth/login", "POST", loginPayload);
+
+        if (loginResponse.status === 200) {
+            const token = loginResponse.data;
+            localStorage.setItem("user", JSON.stringify(token));
+            window.location.href = "../html/timeLine.html";
+            return;
+        }
+
+        alert("Registration succeeded but login failed!");
+        return;
+    }
+
+    alert("Response: " + response.data);
 });
+
 
 // --- Favorite Game Dropdown ---
 const gameInput = document.getElementById("favoriteGameInput");

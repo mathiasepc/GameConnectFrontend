@@ -7,7 +7,7 @@ export function createPostElement(post, options = {}) {
     const postElement = document.createElement("div");
     postElement.classList.add(
         "flex", "flex-col", "items-start",
-        "p-4", "rounded-lg", "bg-white", "shadow",
+        "p-4", "rounded-lg", "bg-white/75", "shadow",
         "w-full", "max-w-[700px]", "mx-auto"
     );
 
@@ -101,7 +101,7 @@ export function createPostElement(post, options = {}) {
     // --- Action Buttons Row ---
     const actionRow = document.createElement("div");
     actionRow.classList.add(
-        "flex", "items-center", "gap-6", "mt-3",
+        "flex", "justify-self-center", "items-center", "gap-6", "mt-3",
         "text-xl", "text-gray-700"
     );
 
@@ -126,10 +126,11 @@ export function createPostElement(post, options = {}) {
 
     commentBtn.innerHTML = `<i class="fa-regular fa-comment"></i>`;
 
-    commentBtn.addEventListener("click", () => {
+    commentBtn.addEventListener("click",async () => {
         commentSection.classList.toggle("hidden");
         if (!commentSection.classList.contains("hidden")) {
             commentInput.focus()
+            await loadComments(post.id);
         }
         console.log("Comment clicked for post:", post.id);
     });
@@ -142,7 +143,7 @@ export function createPostElement(post, options = {}) {
 
     // --- Comment Input Section (hidden by default) ---
     const commentSection = document.createElement("div");
-    commentSection.classList.add("w-full", "mt-3", "hidden", "flex", "items-center", "gap-2");
+    commentSection.classList.add("w-full", "mt-3", "hidden", "flex", "items-center", "gap-2", "flex-col");
 
 // Comment input
     const commentInput = document.createElement("input");
@@ -157,11 +158,19 @@ export function createPostElement(post, options = {}) {
 // Submit button
     const submitCommentBtn = document.createElement("button");
     submitCommentBtn.classList.add(
-        "bg-blue-500", "hover:bg-blue-600",
+        "bg-sky-400", "hover:bg-blue-600",
         "text-white", "px-4", "py-2",
         "rounded-full", "text-sm"
     );
     submitCommentBtn.textContent = "Send";
+
+    const inputRow = document.createElement("div");
+    inputRow.classList.add(
+        "w-full", "flex", "flex-row", "gap-2"
+    )
+
+    inputRow.append(commentInput);
+    inputRow.appendChild(submitCommentBtn);
 
     submitCommentBtn.addEventListener("click", async () => {
         const content = commentInput.value.trim();
@@ -195,11 +204,13 @@ export function createPostElement(post, options = {}) {
 
             if (!response.ok) throw new Error("Failed to send comment");
 
-            console.log("Comment saved:", await response.json());
+            const savedComment = await response.json();
+            console.log("Comment saved:", savedComment);
 
-            // Reset UI
+            await loadComments(post.id);
             commentInput.value = "";
-            commentSection.classList.add("hidden");
+
+
 
         } catch (err) {
             console.error(err);
@@ -209,10 +220,69 @@ export function createPostElement(post, options = {}) {
 
 
 // Add input + button to section
-    commentSection.appendChild(commentInput);
-    commentSection.appendChild(submitCommentBtn);
+    commentSection.appendChild(inputRow);
 
     postElement.appendChild(commentSection);
+
+    const commentList = document.createElement("div");
+    commentList.classList.add(
+        "flex",
+        "flex-col",
+        "gap-2",
+        "rounded-lg",
+        "w-full",
+        "break-words",
+        "p-3",
+        "min-h-[40px]"
+
+    );
+
+    commentSection.appendChild(commentList);
+
+    async function loadComments(postId) {
+        commentList.innerHTML = ""; // clear old comments
+
+        try {
+            const response = await fetch(
+                `http://localhost:8080/timeline/posts/${postId}/comments`
+            );
+
+            if (!response.ok) throw new Error("Failed to fetch comments");
+
+            const comments = await response.json();
+
+            if (comments.length === 0) {
+                const empty = document.createElement("p");
+                empty.textContent = "No comments yet.";
+                empty.classList.add("text-sm", "text-gray-500");
+                commentList.appendChild(empty);
+                return;
+            }
+
+            comments.forEach(comment => {
+                const commentItem = document.createElement("div");
+                commentItem.classList.add(
+                    "rounded-full",
+                    "px-3",
+                    "py-2",
+                    "text-sm",
+                    "border",
+                    "border-gray-300"
+                );
+
+                commentItem.innerHTML = `
+                <span class="font-semibold">${comment.username}</span>
+                <span class="text-gray-700"> ${comment.content}</span>
+            `;
+
+                commentList.appendChild(commentItem);
+            });
+
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
 
 
 

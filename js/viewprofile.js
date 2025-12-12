@@ -21,11 +21,52 @@ document.addEventListener("DOMContentLoaded", () => {
     const favoriteGameIdInput = document.getElementById("favoriteGameId");
     const addGameButton = document.getElementById("addGameButton");
 
-    // Fetch and display profile data
+    // -----------------------------
+    // Carousel Functions
+    // -----------------------------
+    function updateCarouselButtons() {
+        if (carousel.scrollWidth <= carousel.clientWidth) {
+            prev.style.display = "none";
+            next.style.display = "none";
+        }
+
+        if (carousel.scrollLeft <= 0) {
+            prev.style.display = "none";
+        } else {
+            prev.style.display = "block";
+        }
+
+        if (Math.ceil(carousel.scrollLeft + carousel.clientWidth) >= carousel.scrollWidth) {
+            next.style.display = "none";
+        } else {
+            next.style.display = "block";
+        }
+    }
+
+    function adjustCarouselAlignment() {
+        if (carousel.children.length <= 2) {
+            carousel.style.justifyContent = "center";
+        } else {
+            carousel.style.justifyContent = "flex-start";
+        }
+    }
+
+    function scrollCarousel(direction) {
+        if (carousel.children.length === 0) return;
+        const itemWidth = carousel.children[0].offsetWidth + parseInt(getComputedStyle(carousel).gap || 0);
+        carousel.scrollBy({ left: itemWidth * direction, behavior: "smooth" });
+    }
+
+    prev.addEventListener("click", () => scrollCarousel(-1));
+    next.addEventListener("click", () => scrollCarousel(1));
+    carousel.addEventListener("scroll", updateCarouselButtons);
+
+    // -----------------------------
+    // Fetch profile data
+    // -----------------------------
     fetch(`${URL}/${userId}?currentUserId=${currentUserId}`)
         .then(res => res.json())
         .then(profile => {
-            // Profile info
             document.getElementById("username").textContent = profile.username;
             document.getElementById("bio").textContent = profile.bio;
             document.getElementById("img").src = profile.img;
@@ -40,7 +81,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 existingGameIds.add(game.id);
             });
 
-            // Hide follow button if viewing own profile
+            // Update carousel after initial load
+            adjustCarouselAlignment();
+            updateCarouselButtons();
+
+            // Follow button
             const followButton = document.getElementById("followButton");
             if(currentUserId == profile.id) followButton.hidden = true;
 
@@ -69,7 +114,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     .catch(err => console.error(err));
             });
 
-            // Followers / Following popup
             setupFollowersPopup(profile.id);
 
             // Display posts
@@ -88,8 +132,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 postsContainer.appendChild(postElement);
             });
 
-            // Only allow adding games if viewing your own profile
-            if(currentUserId == profile.id){
+            // Adding games
+            if(currentUserId === profile.id){
                 setupGameSearch();
                 addGameButton.addEventListener("click", async () => {
                     const gameId = favoriteGameIdInput.value;
@@ -119,6 +163,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         addGameToCarousel(newGame);
                         existingGameIds.add(gameId);
 
+                        // Update carousel after adding
+                        adjustCarouselAlignment();
+                        updateCarouselButtons();
+
                         // Clear inputs
                         gameInput.value = "";
                         favoriteGameIdInput.value = "";
@@ -132,17 +180,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 });
             } else {
-                // Hide add game section if not your profile
                 document.getElementById("addGameSection").hidden = true;
             }
-
-            // Carousel buttons
-            prev.addEventListener("click", () => {
-                carousel.scrollBy({ left: -300, behavior: "smooth" });
-            });
-            next.addEventListener("click", () => {
-                carousel.scrollBy({ left: 300, behavior: "smooth" });
-            });
         })
         .catch(err => console.error(err));
 
@@ -152,12 +191,11 @@ document.addEventListener("DOMContentLoaded", () => {
     function addGameToCarousel(game){
         const div = document.createElement("div");
         div.innerHTML = `
-        <img src="${game.img}" alt="${game.name}">
-        <div class="truncate">${game.name}</div>
-    `;
+            <img src="${game.img}" alt="${game.name}">
+            <div class="truncate">${game.name}</div>
+        `;
         carousel.appendChild(div);
     }
-
 
     function setupFollowersPopup(profileId){
         const followersContainer = document.getElementById("followersContainer");
@@ -188,7 +226,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         li.appendChild(img);
                         li.appendChild(usernameText);
-
                         followersList.appendChild(li);
                     });
                     followersPopup.classList.remove("hidden");
@@ -204,56 +241,61 @@ document.addEventListener("DOMContentLoaded", () => {
     function setupGameSearch(){
         let debounceTimeout;
 
-        gameInput.addEventListener("input", async () => {
+        async function runSearch() {
             const query = gameInput.value.trim();
-            if(!query){
+            if (!query) {
                 dropdown.classList.add("hidden");
                 return;
             }
 
-            clearTimeout(debounceTimeout);
-            debounceTimeout = setTimeout(async () => {
-                try {
-                    const res = await fetch(`http://localhost:8080/igdb/games?search=${encodeURIComponent(query)}`);
-                    const games = await res.json();
+            try {
+                const res = await fetch(`http://localhost:8080/igdb/games?search=${encodeURIComponent(query)}`);
+                const games = await res.json();
 
-                    dropdown.innerHTML = "";
-                    if(games.length === 0){
-                        dropdown.innerHTML = `<div class="px-3 py-2 text-gray-500">No results</div>`;
-                    } else {
-                        games.forEach(game => {
-                            const div = document.createElement("div");
-                            div.classList.add("px-3","py-2","cursor-pointer","hover:bg-gray-100","flex","items-center","gap-2");
-                            div.innerHTML = `
-                                <img src="${game.coverUrl || '/images/default-game.png'}" alt="${game.name}" width="40" class="rounded-sm">
-                                <span>${game.name}</span>
-                            `;
-                            div.addEventListener("click", () => {
-                                gameInput.value = game.name;
-                                favoriteGameNameInput.value = game.name;
-                                favoriteGameImgInput.value = game.coverUrl ?? "/images/default-game.png";
-                                favoriteGameIdInput.value = game.id;
-                                dropdown.classList.add("hidden");
-                            });
-                            dropdown.appendChild(div);
+                dropdown.innerHTML = "";
+                if (games.length === 0) {
+                    dropdown.innerHTML = `<div class="px-3 py-2 text-gray-500">No results</div>`;
+                } else {
+                    games.forEach(game => {
+                        const div = document.createElement("div");
+                        div.classList.add("px-3","py-2","cursor-pointer","hover:bg-gray-100","flex","items-center","gap-2");
+                        div.innerHTML = `
+                            <img src="${game.coverUrl || '/images/default-game.png'}" alt="${game.name}" width="40" class="rounded-sm">
+                            <span>${game.name}</span>
+                        `;
+                        div.addEventListener("click", () => {
+                            gameInput.value = game.name;
+                            favoriteGameNameInput.value = game.name;
+                            favoriteGameImgInput.value = game.coverUrl ?? "/images/default-game.png";
+                            favoriteGameIdInput.value = game.id;
+                            dropdown.classList.add("hidden");
                         });
-                    }
-
-                    dropdown.classList.remove("hidden");
-                } catch(err){
-                    console.error("Game search failed", err);
-                    dropdown.classList.add("hidden");
+                        dropdown.appendChild(div);
+                    });
                 }
-            }, 300);
+
+                dropdown.classList.remove("hidden");
+            } catch(err){
+                console.error("Game search failed", err);
+                dropdown.classList.add("hidden");
+            }
+        }
+
+        gameInput.addEventListener("input", () => {
+            clearTimeout(debounceTimeout);
+            debounceTimeout = setTimeout(runSearch, 300);
         });
 
-        // Hide dropdown when clicking outside
         document.addEventListener("click", (e) => {
-            if(!e.target.closest("#favoriteGameInput") &&
-                !e.target.closest("#favoriteGameDropdown")){
+            if(!e.target.closest("#favoriteGameInput") && !e.target.closest("#favoriteGameDropdown")){
                 dropdown.classList.add("hidden");
             }
         });
-    }
 
+        gameInput.addEventListener("focus", () => {
+            if(gameInput.value.trim() !== ""){
+                runSearch();
+            }
+        });
+    }
 });

@@ -8,7 +8,7 @@
 
 #gamesCarousel {
     display: flex;
-    gap: 1rem; /* space between games */
+    gap: 16px; /* space between games */
     scroll-behavior: smooth;
     overflow-x: auto;
     padding: 0.25rem 0; /* smaller top/bottom padding */

@@ -27,6 +27,11 @@
         <!-- Hidden file input -->
         <input type="text" id="profilePicUrlInput" name="img" placeholder="enter image url here"
                class="hidden w-64 px-4 py-3 rounded-full bg-gray-300/40 backdrop-blur-sm border border-white/10 text-gray-800 placeholder-gray-600">
+        <button id="setProfilePicBtn"
+                class="hidden mt-2 px-4 py-2 bg-sky-400 text-white rounded-full hover:bg-sky-500">
+            Set Picture
+        </button>
+        <input type="hidden" id="profilePicValue" name="img">
 
         <span id="pictureError" role="alert"
               class="text-red-500 text-sm ml-3 mt-1"></span>
@@ -89,8 +94,6 @@
                     <input type="hidden" id="favoriteGameId" name="favoriteGameId">
                 </div>
             </div>
-
-
 
 
             <button type="submit" id="registerBtn"

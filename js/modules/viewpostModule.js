@@ -71,8 +71,6 @@ export function createPostElement(post, options = {}) {
     postElement.appendChild(content);
 
 
-
-    //Tags
     // Tags container
     const tagsContainer = document.createElement("div");
     tagsContainer.classList.add("mt-2", "flex", "flex-wrap", "gap-2");

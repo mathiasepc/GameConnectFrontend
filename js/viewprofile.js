@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const existingGameIds = new Set();
             (profile.games ?? []).forEach(game => {
                 addGameToCarousel(game);
-                existingGameIds.add(game.id);
+                existingGameIds.add(String(game.id)); // store as string
             });
 
             // Update carousel after initial load
@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         return;
                     }
 
-                    if(existingGameIds.has(gameId)){
+                    if(existingGameIds.has(String(gameId))){
                         alert("This game is already in your favorites.");
                         return;
                     }
@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         const newGame = { id: gameId, name: gameName, img: gameImg };
                         addGameToCarousel(newGame);
-                        existingGameIds.add(gameId);
+                        existingGameIds.add(String(gameId));
 
                         // Update carousel after adding
                         adjustCarouselAlignment();
@@ -192,7 +192,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const div = document.createElement("div");
         div.innerHTML = `
             <img src="${game.img}" alt="${game.name}">
-            <div class="truncate">${game.name}</div>
         `;
         carousel.appendChild(div);
     }

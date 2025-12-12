@@ -224,7 +224,7 @@ async function onConfirmDelete(){
         closeDeleteModal()
         //call the backend and delete user here
         console.log("hello from on confirm delete")
-        const response = await apiRequest(`admin/delete-user/?id=${deletingUserID}`, "DELETE")
+        const response = await apiRequest(`/admin/delete-user/?id=${deletingUserID}`, "DELETE")
         console.log(response)
         loadPage()
     }else{
@@ -247,13 +247,30 @@ From the RestController we need to contact */
  async function apiRequest(url, method = "GET", data = null) {
     const options = {method, headers: {}};
 
-    // our base url is http://localhost:8080/
+     //decode token:
+     function decodeJwt(token) {
+         const payload = token.split(".")[1];
+         return JSON.parse(atob(payload));
+     }
+
+     const raw = localStorage.getItem("user");
+     const stored = JSON.parse(raw);
+     const token = stored.token;
+
+     const userData = decodeJwt(token);
+     const loggedInUserId = Number(userData.sub);
+
+     console.log("Logged in user ID:", loggedInUserId);
+
+
+     // our base url is http://localhost:8080/
     const baseUrl = `http://localhost:8080/${url}`;
 
 
     // If data has data, we need to set header type to json and stringify data
     if (data) {
         options.headers["Content-Type"] = "application/json";
+        options.headers["Authorization"] = ("Bearer" + token);
         options.body = JSON.stringify(data);
     }
 

@@ -225,6 +225,7 @@ async function onConfirmDelete(){
         //call the backend and delete user here
         console.log("hello from on confirm delete")
         const response = await apiRequest(`admin/delete-user/?id=${deletingUserID}`, "DELETE")
+        console.log(response)
         loadPage()
     }else{
         deleteWrongInputText.classList.remove("hidden")

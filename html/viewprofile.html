@@ -3,15 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <title>Profile Page</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="../css/output.css" rel="stylesheet">
+  <link href="../css/carousel.css" rel="stylesheet">
 </head>
-<body class="bg-gradient-to-b from-blue-100 via-white to-purple-100 h-[100vh]">
+<body class="bg-gradient-to-b from-blue-100 via-white to-purple-100 min-h-screen">
+
+<div id="searchBarFragment"></div>
+<script src="../js/loadFragment.js"></script>
 
 <!-- Centered container with side padding -->
-<div class="max-w-4xl mx-auto p-6">
+<div class="w-full mx-auto p-6">
 
   <!-- Profile Container -->
-  <div class="flex flex-col md:flex-row items-start p-6 rounded-lg">
+  <div class="justify-self-center flex flex-col md:flex-row items-start p-6 rounded-lg">
 
     <!-- Profile Picture -->
     <div class="flex-shrink-0">
@@ -24,7 +28,7 @@
       <!-- Username + Follow Button -->
       <div class="flex items-center justify-start gap-40">
         <h1 id="username" class="text-2xl font-semibold text-gray-800">Username</h1>
-        <button id ="followButton" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-1 rounded-full">
+        <button id="followButton" class="bg-sky-400 hover:bg-sky-500 text-white font-semibold px-4 py-1 rounded-full">
           Follow
         </button>
       </div>
@@ -32,20 +36,92 @@
       <!-- Stats: Posts / Following / Followers -->
       <div class="flex space-x-6 mt-2 text-gray-700 text-sm">
         <div><span id="postsCount" class="font-semibold">0</span> Posts</div>
-        <div><span id="followingCount" class="font-semibold">0</span> Following</div>
-        <div><span id="followersCount" class="font-semibold">0</span> Followers</div>
+        <div id="followingContainer" class="cursor-pointer">
+          <span id="followingCount" class="font-semibold">0</span> Following
+        </div>
+        <div id="followersContainer" class="cursor-pointer">
+          <span id="followersCount" class="font-semibold">0</span> Followers
+        </div>
+      </div>
+
+      <!-- Followers popup -->
+      <div id="followersPopup" class="hidden absolute z-50">
+        <div class="bg-gradient-to-b from-blue-100 via-white to-purple-100 border-2 border-blue-500 p-4 rounded-lg w-96 max-h-96 overflow-y-auto shadow-lg">
+          <h2 id="popupTitle" class="text-lg font-semibold mb-2">Followers</h2>
+          <ul id="followersList" class="space-y-2"></ul>
+          <button id="closeFollowers" class="mt-2 bg-blue-100 hover:bg-blue-200 px-3 py-1 rounded border border-blue-500">Close</button>
+        </div>
       </div>
 
       <!-- Bio -->
       <p id="bio" class="mt-4 text-gray-700 text-sm"></p>
 
     </div>
+  </div>
+
+  <!-- Favorite Games Section -->
+  <div class="mt-6 relative w-full max-w-4xl mx-auto">
+
+
+
+    <!-- Add Game Input -->
+    <div id="addGameSection" class="mb-4 text-center relative">
+      <input
+              type="text"
+              id="favoriteGameInput"
+              placeholder="Add a game to your favorites..."
+              class="border border-blue-500 rounded px-3 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      />
+      <button
+              id="addGameButton"
+              class="ml-2 bg-sky-400 hover:bg-sky-500 text-white px-4 py-2 rounded"
+      >
+        Add Game
+      </button>
+
+      <!-- Hidden fields to store selected game info -->
+      <input type="hidden" id="favoriteGameName">
+      <input type="hidden" id="favoriteGameImg">
+      <input type="hidden" id="favoriteGameId">
+
+      <!-- Dropdown for game search results -->
+      <div
+              id="favoriteGameDropdown"
+              class="absolute top-full left-0 w-full
+                                bg-gradient-to-b from-blue-100 via-white to-purple-100
+                                border-2 border-blue-500
+                                rounded-lg shadow-lg
+                                p-2
+                                z-50 hidden
+                                max-h-60 overflow-y-auto"
+      ></div>
+
+    </div>
+    <h2 class="text-lg font-semibold text-gray-800 mb-4 text-center">Favorite Games</h2>
+
+    <!-- Carousel wrapper -->
+    <div class="relative bg-white border-2 border-white rounded-lg shadow-md overflow-hidden" id="gamesCarouselWrapper">
+      <button id="gamesPrev"
+              class="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-sky-400 text-white px-3 py-2 rounded-full hover:bg-sky-500">
+        &#8592;
+      </button>
+
+      <div id="gamesCarousel">
+        <!-- Game items appended dynamically -->
+      </div>
+
+      <button id="gamesNext"
+              class="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-sky-400 text-white px-3 py-2 rounded-full hover:bg-sky-500">
+        &#8594;
+      </button>
+    </div>
 
 
   </div>
-  <div id="postsContainer"></div>
-</div>
 
+  <!-- Posts Section -->
+  <div id="postsContainer" class="mt-6"></div>
+</div>
 
 <script type="module" src="../js/viewprofile.js"></script>
 </body>

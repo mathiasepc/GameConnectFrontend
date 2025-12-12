@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="../css/output.css">
+</head>
+<body class="min-h-screen flex items-center bg-cover bg-center"
+      style="background-image: url('../image/LogIn-BG.png');">
+
+<!-- Hovedindhold -->
+<div class="relative z-10 w-full px-6 md:px-10 lg:px-16">
+    <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-10 lg:gap-20 max-w-6xl">
+        <!-- Logo / venstre side -->
+        <div class="flex justify-center md:justify-start">
+            <img
+                    src="../image/gameLogo.png"
+                    alt="Game Connect"
+                    class="w-full max-w-2xl drop-shadow-xl"
+            />
+        </div>
+
+        <!-- Loginform / højre side -->
+        <div class="flex justify-center md:justify-end">
+            <form
+                    class="w-full max-w-sm space-y-5 text-sky-700"
+                    action="#"
+                    method="post"
+                    id="loginForm"
+            >
+                <!-- Email -->
+                <div class="space-y-2">
+                    <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            placeholder="Email@email.com"
+                            class="w-full rounded-full bg-white/70 border border-white/60 px-6 py-3 text-sm shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-transparent"
+                    />
+                    <span id="emailError" role="alert"
+                          class="text-red-500 text-sm ml-3 mt-1"></span>
+                </div>
+
+                <!-- Password + forgot -->
+                <div class="space-y-2">
+                    <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            placeholder="Password"
+                            class="w-full rounded-full bg-white/70 border border-white/60 px-6 py-3 text-sm shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-transparent"
+                    />
+                    <span id="passwordError" role="alert"
+                          class="text-red-500 text-sm ml-3 mt-1"></span>
+                    <span id="wrongCredentialsError" role="alert"
+                          class="text-red-500 text-sm ml-3 mt-1"></span>    
+                    <div class="flex justify-end">
+                        <a href="#"
+                           class="text-xs text-sky-400 hover:text-sky-500 hover:underline">
+                            Forgot password?
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Knapper -->
+                <div class="flex items-center gap-4 pt-2">
+                    <button
+                            type="submit"
+                            id="loginBtn"
+                            class="flex-1 rounded-full border border-sky-400 bg-white px-6 py-2 text-sm font-medium text-sky-500 shadow-sm hover:bg-sky-50 focus:outline-none focus:ring-2 focus:ring-sky-300"
+                    >
+                        Sign in
+                    </button>
+                    <button
+                            type="button"
+                            id="registerBtn"
+                            class="flex-1 rounded-full bg-sky-500 px-6 py-2 text-sm font-medium text-white shadow-sm hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-300"
+                    >
+                        Register
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+
+</body>
+<script type="module" src="../js/user-login.js"></script>
+</html>

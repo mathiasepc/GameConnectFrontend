@@ -42,7 +42,9 @@ loginBtn.addEventListener("click", async (e) => {
 
             const token = response.data;
 
-            localStorage.setItem("user", token);
+            console.log(token);
+
+            localStorage.setItem("user", JSON.stringify(token));
             window.location.href = "../html/timeLine.html";
         }
     );

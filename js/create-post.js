@@ -21,6 +21,22 @@ const gameWrapper = document.querySelector("#gameInputWrapper");
 const gameInput = document.querySelector("#gameInput");
 
 
+//decode token:
+function decodeJwt(token) {
+    const payload = token.split(".")[1];
+    return JSON.parse(atob(payload));
+}
+
+const raw = localStorage.getItem("user");
+const stored = JSON.parse(raw);
+const token = stored.token;
+
+const userData = decodeJwt(token);
+const loggedInUserId = Number(userData.sub);
+
+console.log("Logged in user ID:", loggedInUserId);
+
+
 
 //button for game input:
 
@@ -43,7 +59,7 @@ async function createPost(event) {
     event.preventDefault();
     console.log("creating post")
 
-    let textContent = document.querySelector("#textContent")
+    let textContent = document.querySelector("#postText")
     const errorBox = document.querySelector("#postError");
 
     if (!textContent.value.toString().trim()) {
@@ -64,7 +80,7 @@ async function createPost(event) {
     const postBody = {
         content: textContent.value,
         createdAt: new Date().toISOString(),
-        user: {id: 1}, // this needs to be changed with logged in user
+        user: {id: loggedInUserId},
         tags: tags.map(t => ({ name: t })),
         media: imageInput.value ? { url: imageInput.value } : null
     }
@@ -74,9 +90,11 @@ async function createPost(event) {
     try{
     const response = await fetch(URL + 'create-post', {
         method: 'POST',
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json",
+            "Authorization": "Bearer " + token},
         body: JSON.stringify(postBody)
     });
+        console.log(response.json)
 
         if (!response.ok) throw new Error("Post failed");
 
@@ -93,6 +111,8 @@ async function createPost(event) {
         console.error(err);
         alert("Failed to send post");
     }
+
+
 
 }
 

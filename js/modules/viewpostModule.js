@@ -101,8 +101,8 @@ export function createPostElement(post, options = {}) {
     // --- Action Buttons Row ---
     const actionRow = document.createElement("div");
     actionRow.classList.add(
-        "flex", "justify-self-center", "items-center", "gap-6", "mt-3",
-        "text-xl", "text-gray-700"
+        "flex", "justify-self-center", "items-center", "gap-2", "mt-3",
+        "text-xl", "text-gray-700", "pb-3"
     );
 
 // Like button
@@ -117,7 +117,17 @@ export function createPostElement(post, options = {}) {
         // TODO: integrate backend call POST /posts/{id}/like
     });
 
-    actionRow.appendChild(likeBtn);
+    const likeGroup = document.createElement("div");
+    likeGroup.classList.add(
+        "flex", "items-center", "gap-1", "pr-3"
+    )
+
+    const likeCount = document.createElement("span");
+    likeCount.innerHTML = "1234";
+
+    likeGroup.appendChild(likeBtn)
+    likeGroup.appendChild(likeCount)
+    actionRow.appendChild(likeGroup);
 
 // Comment button
     const commentBtn = document.createElement("button");
@@ -136,21 +146,41 @@ export function createPostElement(post, options = {}) {
     });
 
 
-    actionRow.appendChild(commentBtn);
+    const commentCount = document.createElement("span");
+    commentCount.innerHTML = "1234"
+    actionRow.appendChild(commentCount);
+    commentCount.innerHTML = post.commentsCount;
+
+    const commentGroup = document.createElement("div");
+    commentGroup.classList.add(
+        "flex", "items-center", "gap-1", "pr-3"
+    )
+    commentGroup.appendChild(commentBtn);
+    commentGroup.appendChild(commentCount);
+    actionRow.appendChild(commentGroup);
+
+
 
 // Add row to post
     postElement.appendChild(actionRow);
 
     // --- Comment Input Section (hidden by default) ---
     const commentSection = document.createElement("div");
-    commentSection.classList.add("w-full", "mt-3", "hidden", "flex", "items-center", "gap-2", "flex-col");
+
+    const commentTitle = document.createElement("h2");
+    commentTitle.innerText = "Comments:"
+    commentTitle.classList.add(
+        "pt-4", "text-gray-300",
+        "font-bold", "text-heading"
+    )
+    commentSection.classList.add("w-full", "hidden", "flex", "items-center", "flex-col");
 
 // Comment input
     const commentInput = document.createElement("input");
     commentInput.type = "text";
     commentInput.placeholder = "Write a comment...";
     commentInput.classList.add(
-        "flex-grow", "border", "border-gray-300",
+        "flex-grow", "border", "border-gray-700",
         "rounded-full", "px-4", "py-2", "text-sm",
         "focus:outline-none"
     );
@@ -169,8 +199,10 @@ export function createPostElement(post, options = {}) {
         "w-full", "flex", "flex-row", "gap-2"
     )
 
+
     inputRow.append(commentInput);
     inputRow.appendChild(submitCommentBtn);
+
 
     submitCommentBtn.addEventListener("click", async () => {
         const content = commentInput.value.trim();
@@ -216,11 +248,15 @@ export function createPostElement(post, options = {}) {
             console.error(err);
             alert("Could not send comment.");
         }
+
+        commentCount.innerHTML = Number(commentCount.innerHTML) + 1 ;
     });
 
 
 // Add input + button to section
     commentSection.appendChild(inputRow);
+    commentSection.appendChild(commentTitle);
+
 
     postElement.appendChild(commentSection);
 
@@ -232,7 +268,6 @@ export function createPostElement(post, options = {}) {
         "rounded-lg",
         "w-full",
         "break-words",
-        "p-3",
         "min-h-[40px]"
 
     );
@@ -251,6 +286,7 @@ export function createPostElement(post, options = {}) {
 
             const comments = await response.json();
 
+
             if (comments.length === 0) {
                 const empty = document.createElement("p");
                 empty.textContent = "No comments yet.";
@@ -259,10 +295,21 @@ export function createPostElement(post, options = {}) {
                 return;
             }
 
-            comments.forEach(comment => {
+            comments.forEach((comment, index) => {
                 const commentItem = document.createElement("div");
+
+                const baseSaturation = 100;
+                const fadePerStep = 30;
+
+                const saturation = Math.max(
+                    30,
+                    baseSaturation - index * fadePerStep
+                );
+
+                commentItem.style.backgroundColor = `hsl(210, ${saturation}%, 95%, ${saturation}%)`;
+
                 commentItem.classList.add(
-                    "rounded-full",
+                    "rounded-xl",
                     "px-3",
                     "py-2",
                     "text-sm",
@@ -271,12 +318,13 @@ export function createPostElement(post, options = {}) {
                 );
 
                 commentItem.innerHTML = `
-                <span class="font-semibold">${comment.username}</span>
-                <span class="text-gray-700"> ${comment.content}</span>
-            `;
+        <span class="font-semibold">${comment.username}:      </span>
+        <span class="text-gray-700"> ${comment.content}</span>
+    `;
 
                 commentList.appendChild(commentItem);
             });
+
 
         } catch (err) {
             console.error(err);

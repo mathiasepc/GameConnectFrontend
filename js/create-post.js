@@ -112,6 +112,7 @@ async function createPost(event) {
         alert("Failed to send post");
     }
 
+    window.location.reload();
 
 
 }

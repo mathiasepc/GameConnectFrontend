@@ -8,7 +8,7 @@ export function createPostElement(post, options = {}) {
     postElement.classList.add(
         "flex", "flex-col", "items-start",
         "p-4", "rounded-lg", "bg-white/75", "shadow",
-        "w-full", "max-w-[700px]", "mx-auto"
+        "w-full", "max-w-[33vw]", "mx-auto"
     );
 
     // Header
@@ -178,9 +178,7 @@ export function createPostElement(post, options = {}) {
     commentInput.type = "text";
     commentInput.placeholder = "Write a comment...";
     commentInput.classList.add(
-        "flex-grow", "border", "border-gray-700",
-        "rounded-full", "px-4", "py-2", "text-sm",
-        "focus:outline-none"
+        "flex-grow","text-gray-700", "placeholder-gray-400", "focus:outline-none", "bg-white", "rounded-full", "border", "border-blue-200", "p-1", "items-center"
     );
 
 // Submit button

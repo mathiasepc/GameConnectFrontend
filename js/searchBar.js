@@ -92,9 +92,8 @@ document.addEventListener("click", (e) => {
     }
 });
 
-// Show results again when focusing the input
 searchInput.addEventListener("focus", () => {
     if (searchInput.value.trim() !== "") {
-        runSearch(); // re-run the search for the current input
+        runSearch();
     }
 });

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Explore</title>
+  <link href="../css/output.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body class="bg-gradient-to-b from-blue-100 via-white to-purple-100 min-h-screen">
+
+<!-- Left Sidebar Navbar -->
+<nav id="navbarFragment" class="fixed top-0 left-0 h-full w-40 bg-white shadow-lg flex flex-col justify-between p-6 border-r border-r-sky-400 z-50"></nav>
+
+<main class="ml-40 p-6 mt-6"> <!-- Add left margin equal to navbar width -->
+  <h1 class="text-2xl font-bold mb-6 text-center text-gray-800">Explore</h1>
+
+  <!-- Explore grid container -->
+  <div
+          id="exploreGrid"
+          class="grid grid-cols-3 gap-4 auto-rows-auto"
+  ></div>
+</main>
+
+<script type="module" src="../js/loadNavFragment.js"></script>
+<script type="module" src="../js/explore.js"></script>
+</body>
+</html>

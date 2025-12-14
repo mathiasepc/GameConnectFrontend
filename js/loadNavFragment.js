@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const profileLink = container.querySelector("#navProfile");
             const timelineLink = container.querySelector("#navTimeline");
             const logoutBtn = container.querySelector("#navLogout");
+            const exploreLink = container.querySelector("#navExplore")
 
             const user = getLoggedInUser();
             if (!user) {
@@ -26,6 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             timelineLink.href = "timeline.html";
+            exploreLink.href = "explore.html"
             logoutBtn?.addEventListener("click", () => logout());
         })
         .catch(err => console.error("Navbar load error:", err));

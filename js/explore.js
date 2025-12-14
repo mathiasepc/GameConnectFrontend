@@ -1,4 +1,3 @@
-import { createPostElement } from "./modules/viewpostModule.js";
 import { getLoggedInUser } from "./modules/auth.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -10,6 +9,41 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
+    // Function to create post elements for Explore page
+    function createExplorePostElement(post) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "relative w-full h-full cursor-pointer overflow-hidden rounded-lg shadow-md group";
+
+        // Post Image
+        const img = document.createElement("img");
+        img.src = post.media.path;
+        img.alt = post.content || "Post image";
+        img.className = "w-full h-full object-cover transition-transform duration-200 group-hover:scale-105";
+        wrapper.appendChild(img);
+
+        // Overlay box at bottom-left
+        const overlay = document.createElement("div");
+        overlay.className = "absolute bottom-0 left-0 w-full p-3 flex items-center gap-3 bg-black/50 text-white font-bold text-lg";
+
+        // User profile picture
+        const profileImg = document.createElement("img");
+        profileImg.src = post.img;
+        profileImg.alt = post.username;
+        profileImg.className = "w-10 h-10 rounded-full object-cover border-2 border-white";
+        overlay.appendChild(profileImg);
+
+        // Post content
+        const content = document.createElement("p");
+        content.textContent = post.content;
+        content.className = "text-sm line-clamp-2"; // Limits content to 2 lines
+        overlay.appendChild(content);
+
+        wrapper.appendChild(overlay);
+
+        return wrapper;
+    }
+
+
     try {
         const res = await fetch(
             `http://localhost:8080/explore?currentUserId=${currentUser.id}`
@@ -18,36 +52,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!res.ok) throw new Error("Failed to load explore feed");
 
         const posts = await res.json();
-
-        // Filter posts that have images
         const imagePosts = posts.filter((p) => p.media?.path);
 
         imagePosts.forEach((post, index) => {
             const postWrapper = document.createElement("div");
 
-            // Determine position within the 6-post pattern
-            const position = index % 6;
+            // Grid pattern: most posts span 1, every 4th spans 2
+            postWrapper.classList.add("col-span-1");
+            if (index % 6 === 3) postWrapper.classList.add("col-span-2");
 
-            // Apply grid column span based on the pattern
-            if (position === 3) {
-                postWrapper.classList.add("col-span-2");
-            } else {
-                postWrapper.classList.add("col-span-1");
-            }
+            const postElement = createExplorePostElement(post);
 
-            const postElement = createPostElement(post, {
-                showFollowButton: false,
-                currentUserId: currentUser.id,
-            });
-
-            // Slight visual emphasis on the large box
-            if (position === 3) {
-                postElement.classList.add("scale-[1.02]");
-            }
-            console.log(post)
             postElement.addEventListener("click", () => {
                 window.location.href = `../html/viewprofile.html?id=${post.userId}`;
-
             });
 
             postWrapper.appendChild(postElement);

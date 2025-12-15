@@ -406,6 +406,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             const query = gameInput.value.trim();
             if (!query) {
                 dropdown.classList.add("hidden");
+                dropdown.style.zIndex = "1000";
+                dropdown.style.position = "absolute";
                 return;
             }
             try {

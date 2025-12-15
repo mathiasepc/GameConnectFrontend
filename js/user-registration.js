@@ -4,17 +4,28 @@ const btn = document.getElementById("registerBtn");
 const editBtn = document.getElementById("editProfilePic");
 const urlInput = document.getElementById("profilePicUrlInput");
 const preview = document.getElementById("profilePreview");
+const setPicBtn = document.getElementById("setProfilePicBtn");
+const profilePicValue = document.getElementById("profilePicValue")
+const defaultPic = "../image/defaultProfilePic.png"
+
 
 editBtn.addEventListener("click", () => {
     urlInput.classList.toggle("hidden");
+    setPicBtn.classList.toggle("hidden")
 });
 
-urlInput.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") {
-        e.preventDefault();
-        preview.src = urlInput.value;
-        urlInput.classList.add("hidden");
+setPicBtn.addEventListener("click", (e) => {
+    const imageUrl = urlInput.value.trim()
+    if(imageUrl === "") {
+        preview.src = defaultPic
+        urlInput.value = defaultPic
+    } else {
+        preview.src = imageUrl
     }
+        profilePicValue.value = urlInput.value
+        urlInput.value = ""
+        urlInput.classList.add("hidden");
+        setPicBtn.classList.add("hidden")
 });
 
 btn.addEventListener("click", async (e) => {
@@ -26,14 +37,14 @@ btn.addEventListener("click", async (e) => {
     const form = document.getElementById("registrationForm");
     const userRegistration = readyFormData(form);
 
-    userRegistration.img = urlInput.value;
+    userRegistration.img = profilePicValue.value;
     userRegistration.gameName = favoriteGameNameInput.value;
     userRegistration.gameId = Number(favoriteGameIdInput.value);
     userRegistration.gameImg = favoriteGameImgInput.value;
 
     let hasError = false;
 
-    if (!userRegistration.img) {
+    if (!userRegistration.img || userRegistration.img === defaultPic ) {
         document.getElementById("pictureError").textContent = "Profile picture is required!";
         hasError = true;
     }
@@ -99,62 +110,70 @@ const favoriteGameIdInput = document.getElementById("favoriteGameId");
 
 let debounceTimeout;
 
-gameInput.addEventListener("input", async () => {
+// Function to fetch and display games
+async function runGameSearch() {
     const query = gameInput.value.trim();
     if (!query) {
         dropdown.classList.add("hidden");
         return;
     }
 
-    clearTimeout(debounceTimeout);
-    debounceTimeout = setTimeout(async () => {
-        try {
-            const response = await fetch(`http://localhost:8080/igdb/games?search=${encodeURIComponent(query)}`);
-            const games = await response.json();
+    try {
+        const response = await fetch(`http://localhost:8080/igdb/games?search=${encodeURIComponent(query)}`);
+        const games = await response.json();
 
-            dropdown.innerHTML = "";
+        dropdown.innerHTML = "";
 
-            if (games.length === 0) {
-                dropdown.innerHTML = `<div class="px-3 py-2 text-gray-500">No results</div>`;
-            } else {
-                games.forEach(game => {
-                    const div = document.createElement("div");
-                    div.classList.add("px-3", "py-2", "cursor-pointer", "hover:bg-gray-100", "flex", "items-center", "gap-2");
+        if (games.length === 0) {
+            dropdown.innerHTML = `<div class="px-3 py-2 text-gray-500">No results</div>`;
+        } else {
+            games.forEach(game => {
+                const div = document.createElement("div");
+                div.classList.add("px-3", "py-2", "cursor-pointer", "hover:bg-gray-100", "flex", "items-center", "gap-2");
 
-                    div.innerHTML = `
-                        <img src="${game.coverUrl || '/images/default-game.png'}" alt="${game.name}" width="40" class="rounded-sm">
-                        <span>${game.name}</span>
-                    `;
+                div.innerHTML = `
+                    <img src="${game.coverUrl}" alt="${game.name}" width="40" class="rounded-sm">
+                    <span>${game.name}</span>
+                `;
 
-                    div.addEventListener("click", () => {
-                        gameInput.value = game.name;
+                div.addEventListener("click", () => {
+                    gameInput.value = game.name;
+                    favoriteGameNameInput.value = game.name;
+                    favoriteGameImgInput.value = game.coverUrl
+                    favoriteGameIdInput.value = game.id;
 
-                        favoriteGameNameInput.value = game.name;
-                        favoriteGameImgInput.value = game.coverUrl ?? "/images/default-game.png";
-                        favoriteGameIdInput.value = game.id; // important
-
-                        dropdown.classList.add("hidden");
-                    });
-
-                    dropdown.appendChild(div);
+                    dropdown.classList.add("hidden");
                 });
-            }
 
-            dropdown.classList.remove("hidden");
-
-        } catch (err) {
-            console.error("Failed to search games", err);
-            dropdown.classList.add("hidden");
+                dropdown.appendChild(div);
+            });
         }
-    }, 300);
+
+        dropdown.classList.remove("hidden");
+    } catch (err) {
+        console.error("Failed to search games", err);
+        dropdown.classList.add("hidden");
+    }
+}
+
+// Debounced input listener
+gameInput.addEventListener("input", () => {
+    clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(runGameSearch, 300);
 });
 
 // Hide dropdown when clicking outside
 document.addEventListener("click", (e) => {
     if (!e.target.closest("#favoriteGameInput") &&
-        !e.target.closest("#favoriteGameDropdown") &&
-        !e.target.closest("#profilePicUrlInput")) {
+        !e.target.closest("#favoriteGameDropdown")) {
         dropdown.classList.add("hidden");
+    }
+});
+
+// Show results again when focusing the input
+gameInput.addEventListener("focus", () => {
+    if (gameInput.value.trim() !== "") {
+        runGameSearch();
     }
 });
 

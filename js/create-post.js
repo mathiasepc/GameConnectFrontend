@@ -82,7 +82,7 @@ async function createPost(event) {
         createdAt: new Date().toISOString(),
         user: {id: loggedInUserId},
         tags: tags.map(t => ({ name: t })),
-        media: imageInput.value ? { url: imageInput.value } : null
+        media: imageInput.value ? { path: imageInput.value } : null
     }
 
     console.log("Sending:", postBody);
@@ -112,6 +112,7 @@ async function createPost(event) {
         alert("Failed to send post");
     }
 
+    window.location.reload();
 
 
 }

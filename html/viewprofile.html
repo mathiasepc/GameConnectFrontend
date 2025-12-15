@@ -5,6 +5,8 @@
   <title>Profile Page</title>
   <link href="../css/output.css" rel="stylesheet">
   <link href="../css/carousel.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 <body class="bg-gradient-to-b from-blue-100 via-white to-purple-100 min-h-screen">
 
@@ -36,10 +38,10 @@
       <!-- Stats: Posts / Following / Followers -->
       <div class="flex space-x-6 mt-2 text-gray-700 text-sm">
         <div><span id="postsCount" class="font-semibold">0</span> Posts</div>
-        <div id="followingContainer" class="cursor-pointer">
-          <span id="followingCount" class="font-semibold">0</span> Following
+        <div id="followingContainer" class="cursor-pointer hover:text-sky-500 transition-colors duration-200">
+          <span id="followingCount" class="font-semibold ">0</span> Following
         </div>
-        <div id="followersContainer" class="cursor-pointer">
+        <div id="followersContainer" class="cursor-pointer hover:text-sky-500 transition-colors duration-200">
           <span id="followersCount" class="font-semibold">0</span> Followers
         </div>
       </div>
@@ -102,18 +104,20 @@
     <!-- Carousel wrapper -->
     <div class="relative bg-white border-2 border-white rounded-lg shadow-md overflow-hidden" id="gamesCarouselWrapper">
       <button id="gamesPrev"
-              class="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-sky-400 text-white px-3 py-2 rounded-full hover:bg-sky-500">
-        &#8592;
+              class="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-sky-400 text-white w-10 h-10 flex items-center justify-center rounded-full hover:bg-sky-500">
+        <i class="fa-solid fa-chevron-left"></i>
       </button>
 
-      <div id="gamesCarousel">
-        <!-- Game items appended dynamically -->
+      <div id="gamesCarousel" class="flex justify-center gap-0 overflow-x-auto">
+
       </div>
 
       <button id="gamesNext"
-              class="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-sky-400 text-white px-3 py-2 rounded-full hover:bg-sky-500">
-        &#8594;
+              class="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-sky-400 text-white w-10 h-10 flex items-center justify-center rounded-full hover:bg-sky-500">
+        <i class="fa-solid fa-chevron-right"></i>
       </button>
+
+
     </div>
 
 
@@ -122,7 +126,8 @@
   <!-- Posts Section -->
   <div id="postsContainer" class="mt-6"></div>
 </div>
-
+<div id="navbarFragment"></div>
+<script type="module" src="../js/loadNavFragment.js"></script>
 <script type="module" src="../js/viewprofile.js"></script>
 </body>
 </html>

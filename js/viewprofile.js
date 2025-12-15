@@ -61,12 +61,81 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const profile = await res.json();
 
-        document.getElementById("username").textContent = profile.username;
-        document.getElementById("bio").textContent = profile.bio;
-        document.getElementById("img").src = profile.img;
-        document.getElementById("postsCount").textContent = (profile.posts ?? []).length;
-        document.getElementById("followersCount").textContent = profile.followers;
-        document.getElementById("followingCount").textContent = profile.followings;
+        document.getElementById("username").textContent = profile.username
+        document.getElementById("bio").textContent = profile.bio
+        document.getElementById("img").src = profile.img
+        document.getElementById("postsCount").textContent = (profile.posts ?? []).length
+        document.getElementById("followersCount").textContent = profile.followers
+        document.getElementById("followingCount").textContent = profile.followings
+
+        console.log(profile)
+
+        const bioEl = document.getElementById("bio");
+        const bioEdit = document.getElementById("bioEdit");
+        const saveBioBtn = document.getElementById("saveBioBtn");
+        const editBioBtn = document.getElementById("editBioBtn")
+
+
+
+        if (currentUserId === profile.id) {
+
+            editBioBtn.classList.remove("hidden");
+
+            editBioBtn.addEventListener("click", () => {
+                bioEdit.value = profile.bio ?? "";
+
+                bioEl.classList.add("hidden");
+                editBioBtn.classList.add("hidden");
+
+                bioEdit.classList.remove("hidden");
+                saveBioBtn.classList.remove("hidden");
+                bioEdit.focus();
+            });
+
+            saveBioBtn.addEventListener("click", async () => {
+                const newBio = bioEdit.value.trim();
+
+                if (newBio.length > 300) {
+                    alert("Bio cannot be longer than 300 characters");
+                    return;
+                }
+
+                try {
+                    const res = await fetch(`http://localhost:8080/profile/${currentUserId}/bio`, {
+                        method: "PATCH",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ bio: newBio })
+                    });
+
+                    if (!res.ok) throw new Error("Failed to update bio");
+
+                    const updatedProfile = await res.json();
+
+                    profile.bio = updatedProfile.bio;
+
+                    bioEl.textContent = updatedProfile.bio.trim() || "Your bio is empty, edit it now to custome it.";
+
+                    // Back to view mode
+                    bioEl.classList.remove("hidden");
+                    editBioBtn.classList.remove("hidden");
+
+                    bioEdit.classList.add("hidden");
+                    saveBioBtn.classList.add("hidden");
+
+                } catch (err) {
+                    console.error(err);
+                    alert("Could not update bio");
+                }
+            });
+        } else {
+            editBioBtn.classList.add("hidden");
+            bioEdit.classList.add("hidden");
+            saveBioBtn.classList.add("hidden");
+        }
+
+
 
         (profile.posts ?? []).forEach(post => {
             const postElement = createPostElement(

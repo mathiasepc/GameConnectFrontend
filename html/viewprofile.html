@@ -56,7 +56,36 @@
       </div>
 
       <!-- Bio -->
-      <p id="bio" class="mt-4 text-gray-700 text-sm"></p>
+      <div id="bioContainer" class="relative p-2">
+        <!-- Bio display -->
+        <p id="bio" class="text-gray-700 text-sm whitespace-pre-wrap"></p>
+
+        <!-- Bio editor (no visible border) -->
+        <textarea
+                id="bioEdit"
+                class="hidden w-full p-0 text-sm resize-none bg-white outline-none"
+                rows="3"
+                maxlength="300"
+                wrap="hard"
+        ></textarea>
+
+
+        <!-- Save button below textarea -->
+        <button
+                id="saveBioBtn"
+                class="hidden mt-1 bg-sky-400 hover:bg-sky-500 text-white px-3 py-1 rounded text-sm"
+        >
+          Save bio
+        </button>
+
+        <!-- Edit button at bottom-right, slightly offset down -->
+        <button
+                id="editBioBtn"
+                class="absolute right-0 text-sky-500 text-sm hover:underline"
+                style="bottom: -0.5rem;">
+        <i class="fa-solid fa-pen"></i> Edit bio
+        </button>
+      </div>
 
     </div>
   </div>

@@ -205,7 +205,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const isHidden = profilePicInputEl.classList.contains("hidden");
                 profilePicInputEl.classList.toggle("hidden", !isHidden);
                 setProfilePicBtn.classList.toggle("hidden", !isHidden);
-                if (isHidden) profilePicInputEl.focus();
+                if (isHidden) {
+                    profilePicInputEl.value = "";
+                    profilePicInputEl.focus();
+                }
             });
 
             setProfilePicBtn.addEventListener("click", async () => {

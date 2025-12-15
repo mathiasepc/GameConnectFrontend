@@ -61,12 +61,145 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const profile = await res.json();
 
-        document.getElementById("username").textContent = profile.username;
-        document.getElementById("bio").textContent = profile.bio;
-        document.getElementById("img").src = profile.img;
-        document.getElementById("postsCount").textContent = (profile.posts ?? []).length;
-        document.getElementById("followersCount").textContent = profile.followers;
-        document.getElementById("followingCount").textContent = profile.followings;
+        document.getElementById("username").textContent = profile.username
+        document.getElementById("bio").textContent = profile.bio
+        document.getElementById("img").src = profile.img
+        document.getElementById("postsCount").textContent = (profile.posts ?? []).length
+        document.getElementById("followersCount").textContent = profile.followers
+        document.getElementById("followingCount").textContent = profile.followings
+
+        console.log(profile)
+
+        const bioEl = document.getElementById("bio");
+        const bioEdit = document.getElementById("bioEdit");
+        const saveBioBtn = document.getElementById("saveBioBtn");
+        const editBioBtn = document.getElementById("editBioBtn")
+
+        // ----------------- PROFILE PIC UPDATE -----------------
+        const editBtn = document.getElementById("editProfilePic");
+        const profilePicInputEl = document.getElementById("profilePicUrlInput");
+        const setProfilePicBtn = document.getElementById("setProfilePicBtn");
+        const profileImg = document.getElementById("img");
+        const errorMsg = document.getElementById("pictureError");
+
+        if (currentUserId === profile.id) {
+            editBtn.classList.remove("hidden"); // show edit button only for profile owner
+
+            editBtn.addEventListener("click", (e) => {
+                e.stopPropagation(); // Prevent document click from firing
+                const isHidden = profilePicInputEl.classList.contains("hidden");
+                profilePicInputEl.classList.toggle("hidden", !isHidden);
+                setProfilePicBtn.classList.toggle("hidden", !isHidden);
+                if (isHidden) profilePicInputEl.focus();
+            });
+
+            setProfilePicBtn.addEventListener("click", async () => {
+                const newUrl = profilePicInputEl.value.trim();
+                if (!newUrl) {
+                    errorMsg.textContent = "Please enter a valid URL.";
+                    return;
+                }
+
+                try {
+                    const res = await fetch(`${URL}/${currentUserId}/img`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ img: newUrl })
+                    });
+
+                    if (!res.ok) throw new Error("Failed to update profile picture");
+
+                    const updatedProfile = await res.json();
+                    profileImg.src = updatedProfile.img;
+
+                    // hide input & button
+                    profilePicInputEl.classList.add("hidden");
+                    setProfilePicBtn.classList.add("hidden");
+                    errorMsg.textContent = "";
+                } catch (err) {
+                    console.error(err);
+                    errorMsg.textContent = "Failed to update profile picture.";
+                }
+            });
+
+            // Click-away closes profile pic input
+            document.addEventListener("click", (e) => {
+                if (!e.target.closest("#editProfilePic") &&
+                    !e.target.closest("#profilePicUrlInput") &&
+                    !e.target.closest("#setProfilePicBtn")
+                ) {
+                    profilePicInputEl.classList.add("hidden");
+                    setProfilePicBtn.classList.add("hidden");
+                }
+            });
+
+        } else {
+            editBtn.classList.add("hidden"); // hide edit button for other users
+        }
+
+
+
+
+
+        if (currentUserId === profile.id) {
+
+            editBioBtn.classList.remove("hidden");
+
+            editBioBtn.addEventListener("click", () => {
+                bioEdit.value = profile.bio ?? "";
+
+                bioEl.classList.add("hidden");
+                editBioBtn.classList.add("hidden");
+
+                bioEdit.classList.remove("hidden");
+                saveBioBtn.classList.remove("hidden");
+                bioEdit.focus();
+            });
+
+            saveBioBtn.addEventListener("click", async () => {
+                const newBio = bioEdit.value.trim();
+
+                if (newBio.length > 300) {
+                    alert("Bio cannot be longer than 300 characters");
+                    return;
+                }
+
+                try {
+                    const res = await fetch(`http://localhost:8080/profile/${currentUserId}/bio`, {
+                        method: "PATCH",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ bio: newBio })
+                    });
+
+                    if (!res.ok) throw new Error("Failed to update bio");
+
+                    const updatedProfile = await res.json();
+
+                    profile.bio = updatedProfile.bio;
+
+                    bioEl.textContent = updatedProfile.bio.trim() || "Your bio is empty, edit it now to custome it.";
+
+                    // Back to view mode
+                    bioEl.classList.remove("hidden");
+                    editBioBtn.classList.remove("hidden");
+
+                    bioEdit.classList.add("hidden");
+                    saveBioBtn.classList.add("hidden");
+
+                } catch (err) {
+                    console.error(err);
+                    alert("Could not update bio");
+                }
+            });
+        } else {
+            editBioBtn.classList.add("hidden");
+            bioEdit.classList.add("hidden");
+            saveBioBtn.classList.add("hidden");
+        }
+
+
 
         (profile.posts ?? []).forEach(post => {
             const postElement = createPostElement(
@@ -280,7 +413,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
 
         document.addEventListener("click", (e) => {
-            if(!e.target.closest("#favoriteGameInput") && !e.target.closest("#favoriteGameDropdown")){
+            if (!e.target.closest("#favoriteGameInput") && !e.target.closest("#favoriteGameDropdown")) {
                 dropdown.classList.add("hidden");
             }
         });

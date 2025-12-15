@@ -75,6 +75,70 @@ document.addEventListener("DOMContentLoaded", async () => {
         const saveBioBtn = document.getElementById("saveBioBtn");
         const editBioBtn = document.getElementById("editBioBtn")
 
+        // ----------------- PROFILE PIC UPDATE -----------------
+        const editBtn = document.getElementById("editProfilePic");
+        const profilePicInputEl = document.getElementById("profilePicUrlInput");
+        const setProfilePicBtn = document.getElementById("setProfilePicBtn");
+        const profileImg = document.getElementById("img");
+        const errorMsg = document.getElementById("pictureError");
+
+        if (currentUserId === profile.id) {
+            editBtn.classList.remove("hidden"); // show edit button only for profile owner
+
+            editBtn.addEventListener("click", (e) => {
+                e.stopPropagation(); // Prevent document click from firing
+                const isHidden = profilePicInputEl.classList.contains("hidden");
+                profilePicInputEl.classList.toggle("hidden", !isHidden);
+                setProfilePicBtn.classList.toggle("hidden", !isHidden);
+                if (isHidden) profilePicInputEl.focus();
+            });
+
+            setProfilePicBtn.addEventListener("click", async () => {
+                const newUrl = profilePicInputEl.value.trim();
+                if (!newUrl) {
+                    errorMsg.textContent = "Please enter a valid URL.";
+                    return;
+                }
+
+                try {
+                    const res = await fetch(`${URL}/${currentUserId}/img`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ img: newUrl })
+                    });
+
+                    if (!res.ok) throw new Error("Failed to update profile picture");
+
+                    const updatedProfile = await res.json();
+                    profileImg.src = updatedProfile.img;
+
+                    // hide input & button
+                    profilePicInputEl.classList.add("hidden");
+                    setProfilePicBtn.classList.add("hidden");
+                    errorMsg.textContent = "";
+                } catch (err) {
+                    console.error(err);
+                    errorMsg.textContent = "Failed to update profile picture.";
+                }
+            });
+
+            // Click-away closes profile pic input
+            document.addEventListener("click", (e) => {
+                if (!e.target.closest("#editProfilePic") &&
+                    !e.target.closest("#profilePicUrlInput") &&
+                    !e.target.closest("#setProfilePicBtn")
+                ) {
+                    profilePicInputEl.classList.add("hidden");
+                    setProfilePicBtn.classList.add("hidden");
+                }
+            });
+
+        } else {
+            editBtn.classList.add("hidden"); // hide edit button for other users
+        }
+
+
+
 
 
         if (currentUserId === profile.id) {
@@ -349,7 +413,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
 
         document.addEventListener("click", (e) => {
-            if(!e.target.closest("#favoriteGameInput") && !e.target.closest("#favoriteGameDropdown")){
+            if (!e.target.closest("#favoriteGameInput") && !e.target.closest("#favoriteGameDropdown")) {
                 dropdown.classList.add("hidden");
             }
         });

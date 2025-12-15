@@ -19,10 +19,37 @@
   <!-- Profile Container -->
   <div class="justify-self-center flex flex-col md:flex-row items-start p-6 rounded-lg">
 
-    <!-- Profile Picture -->
-    <div class="flex-shrink-0">
-      <img id="img" src="" alt="Profile Picture" class="rounded-full object-cover max-w-[150px] max-h-[150px] w-48 h-48">
+    <div class="relative w-48 h-48 flex-shrink-0">
+      <!-- Profile Image -->
+      <img id="img"
+           src="../image/defaultProfilePic.png"
+           alt="Profile Picture"
+           class="w-48 h-48 rounded-full object-cover">
+
+      <!-- Edit Button (plus) -->
+      <button id="editProfilePic"
+              class="absolute bottom-2 right-2 w-10 h-10 flex items-center justify-center
+               bg-sky-400 hover:bg-sky-500 text-white rounded-full shadow-lg
+               border border-white text-2xl leading-none z-40">
+        +
+      </button>
+
+      <!-- Input field for image URL -->
+      <input type="text" id="profilePicUrlInput" name="img" placeholder="Enter image URL here"
+             class="hidden absolute top-full left-0 mt-2 w-64 px-3 py-2 rounded-full
+                bg-gray-300/90 backdrop-blur-sm border border-white/20 text-gray-800
+                placeholder-gray-600 z-50">
+
+      <button id="setProfilePicBtn"
+              class="hidden absolute top-full left-0 mt-16 w-64 px-4 py-2
+                 bg-sky-400 text-white rounded-full hover:bg-sky-500 z-50">
+        Set Picture
+      </button>
+
+      <span id="pictureError" role="alert"
+            class="absolute top-full left-0 mt-28 text-red-500 text-sm z-50"></span>
     </div>
+
 
     <!-- Profile Info -->
     <div class="ml-0 md:ml-6 mt-4 md:mt-0 flex-1 flex flex-col">

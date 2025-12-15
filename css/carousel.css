@@ -8,7 +8,7 @@
 
 #gamesCarousel {
     display: flex;
-    gap: 1rem; /* space between games */
+    gap: 1px; /* space between games */
     scroll-behavior: smooth;
     overflow-x: auto;
     padding: 0.25rem 0; /* smaller top/bottom padding */
@@ -28,11 +28,11 @@
 
 #gamesCarousel img {
     width: 100%;
-    height: 140px;       /* adjust height as needed */
-    border-radius: 0.5rem;
+    height: 160px;       /* adjust height as needed */
+    border-radius: 0.1rem;
     object-fit: contain; /* fit whole image */
     background-color: transparent; /* same as page background */
-    padding: 0.25rem;
+    padding: 0.1rem;
 }
 
 

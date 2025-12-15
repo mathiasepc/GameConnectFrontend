@@ -85,3 +85,15 @@ function displayResults(results) {
     });
 
 }
+
+document.addEventListener("click", (e) => {
+    if (!e.target.closest("#textContent") && !e.target.closest("#searchResults") && !e.target.closest("#searchButton")) {
+        box.classList.add("hidden"); // only hide, don’t clear input
+    }
+});
+
+searchInput.addEventListener("focus", () => {
+    if (searchInput.value.trim() !== "") {
+        runSearch();
+    }
+});

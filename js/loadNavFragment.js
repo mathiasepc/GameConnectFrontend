@@ -25,17 +25,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 logoutBtn?.remove()
                 timelineLink?.remove()
                 exploreLink?.remove()
-            } else {
-                profileLink.href = `viewprofile.html?id=${user.id}`;
-            }
-            logoutBtn?.addEventListener("click", () => logout());
-
-            if (gameLogo) {
                 gameLogo.style.cursor = "pointer";
                 gameLogo.addEventListener("click", () => {
                     window.location.href = "user-login.html";
                 });
+            } else {
+                profileLink.href = `viewprofile.html?id=${user.id}`;
             }
+            timelineLink.href = "timeline.html";
+            exploreLink.href = "explore.html"
+            logoutBtn?.addEventListener("click", () => logout());
+
+
         })
         .catch(err => console.error("Navbar load error:", err));
 });

@@ -56,10 +56,24 @@ async function loadPosts() {
             const imgEl = postEl.querySelector("img");
             if (imgEl) {
                 imgEl.style.cursor = "pointer";
+
+                // Smooth transition for ring effect
+                imgEl.style.transition = "box-shadow 0.3s ease";
+
                 imgEl.addEventListener("click", () => {
                     window.location.href = `../html/viewprofile.html?id=${post.userId}`;
                 });
+
+                imgEl.addEventListener("mouseenter", () => {
+                    imgEl.style.boxShadow = "0 0 0 4px rgba(59, 130, 246, 0.8)"; // blue ring
+                    imgEl.style.borderRadius = "50%"; // keep circular
+                });
+
+                imgEl.addEventListener("mouseleave", () => {
+                    imgEl.style.boxShadow = "none";
+                });
             }
+
 
             postEl.style.marginBottom = "1.5rem";
             postsContainer.appendChild(postEl);

@@ -30,7 +30,11 @@ emailForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const emailInput = document.getElementById("email");
 
-    // 1) If not it's a valid email.
+    // Reset error messages
+    document.querySelectorAll("[role='alert']")
+        .forEach(span => span.textContent = "");
+
+    // email not valid
     if (!emailInput.checkValidity()) {
         showEmailError("Please enter a valid email address.");
         emailInput.focus();

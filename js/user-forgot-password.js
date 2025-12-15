@@ -61,6 +61,10 @@ emailForm.addEventListener("submit", async (e) => {
 passwordForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    // Reset error messages
+    document.querySelectorAll("[role='alert']")
+        .forEach(span => span.textContent = "");
+
     const form = document.getElementById("passwordForm");
 
     const userPassword = readyFormData(form);

@@ -32,7 +32,8 @@ btn.addEventListener("click", async (e) => {
     e.preventDefault();
     if (e.target.type !== "submit") return;
 
-    document.querySelectorAll("[role='alert']").forEach(span => span.textContent = "");
+    document.querySelectorAll("[role='alert']")
+        .forEach(span => span.textContent = "");
 
     const form = document.getElementById("registrationForm");
     const userRegistration = readyFormData(form);

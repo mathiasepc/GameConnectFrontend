@@ -48,6 +48,5 @@ loginBtn.addEventListener("click", async (e) => {
             window.location.href = "../html/timeLine.html";
         }
     );
-
 });
 

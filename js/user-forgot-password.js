@@ -7,7 +7,7 @@ const passwordForm = document.querySelector("#password-step form");
 
 let userid;
 
-function showPasswordStep() {
+const showPasswordStep = () => {
     const statusEl = document.getElementById("email-status");
     const oldPassword = document.getElementById("oldPassword");
 
@@ -18,7 +18,13 @@ function showPasswordStep() {
     oldPassword.focus();
 }
 
-function showEmailError(msg) {
+// Reset error messages
+const clearErrorMessages = () =>
+    document.querySelectorAll("[role='alert']")
+        .forEach(span => span.textContent = "");
+
+
+const showEmailError = (msg) => {
     const errorEmail = document.getElementById("emailError");
     errorEmail.textContent = msg;
     continueBtn.setAttribute("aria-expanded", "false");
@@ -30,10 +36,6 @@ emailForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const emailInput = document.getElementById("email");
 
-    // Reset error messages
-    document.querySelectorAll("[role='alert']")
-        .forEach(span => span.textContent = "");
-
     // email not valid
     if (!emailInput.checkValidity()) {
         showEmailError("Please enter a valid email address.");
@@ -41,10 +43,13 @@ emailForm.addEventListener("submit", async (e) => {
         return;
     }
 
+    // Reset error messages
+    clearErrorMessages();
+
     try {
         const response = await apiRequest(`users/email?email=${emailInput.value}`, "POST")
 
-        if (!response.status === 200) {
+        if (response.status !== 200) {
             showEmailError("Email not found.");
             return;
         }
@@ -57,13 +62,10 @@ emailForm.addEventListener("submit", async (e) => {
     }
 });
 
-
 passwordForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // Reset error messages
-    document.querySelectorAll("[role='alert']")
-        .forEach(span => span.textContent = "");
+    clearErrorMessages();
 
     const form = document.getElementById("passwordForm");
 

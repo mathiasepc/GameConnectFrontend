@@ -408,6 +408,9 @@
   .h-6 {
     height: calc(var(--spacing) * 6);
   }
+  .h-8 {
+    height: calc(var(--spacing) * 8);
+  }
   .h-10 {
     height: calc(var(--spacing) * 10);
   }
@@ -449,6 +452,9 @@
   }
   .w-6 {
     width: calc(var(--spacing) * 6);
+  }
+  .w-8 {
+    width: calc(var(--spacing) * 8);
   }
   .w-10 {
     width: calc(var(--spacing) * 10);
@@ -520,8 +526,8 @@
   .resize-none {
     resize: none;
   }
-  .auto-rows-auto {
-    grid-auto-rows: auto;
+  .auto-rows-\[300px\] {
+    grid-auto-rows: 300px;
   }
   .grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));

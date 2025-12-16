@@ -30,9 +30,6 @@ emailForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const emailInput = document.getElementById("email");
 
-    // Reset error messages
-    document.querySelectorAll("[role='alert']")
-        .forEach(span => span.textContent = "");
 
     // email not valid
     if (!emailInput.checkValidity()) {

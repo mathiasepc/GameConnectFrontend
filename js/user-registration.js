@@ -76,7 +76,7 @@ btn.addEventListener("click", async (e) => {
 
 
     if (response.status === 200) {
-        alert("User created successfully! userid: " + response.data.id);
+        alert("User created successfully!");
 
         // Auto-login
         const loginPayload = {

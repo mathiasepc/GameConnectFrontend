@@ -17,18 +17,26 @@ document.addEventListener("DOMContentLoaded", () => {
             const timelineLink = container.querySelector("#navTimeline");
             const logoutBtn = container.querySelector("#navLogout");
             const exploreLink = container.querySelector("#navExplore")
+            const gameLogo = container.querySelector("img[alt='Game Logo']");
 
             const user = getLoggedInUser();
             if (!user) {
-                profileLink?.remove();
-                logoutBtn?.remove();
+                profileLink?.remove()
+                logoutBtn?.remove()
+                timelineLink?.remove()
+                exploreLink?.remove()
+                gameLogo.style.cursor = "pointer";
+                gameLogo.addEventListener("click", () => {
+                    window.location.href = "user-login.html";
+                });
             } else {
                 profileLink.href = `viewprofile.html?id=${user.id}`;
             }
-
             timelineLink.href = "timeline.html";
             exploreLink.href = "explore.html"
             logoutBtn?.addEventListener("click", () => logout());
+
+
         })
         .catch(err => console.error("Navbar load error:", err));
 });

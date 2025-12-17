@@ -32,7 +32,8 @@ btn.addEventListener("click", async (e) => {
     e.preventDefault();
     if (e.target.type !== "submit") return;
 
-    document.querySelectorAll("[role='alert']").forEach(span => span.textContent = "");
+    document.querySelectorAll("[role='alert']")
+        .forEach(span => span.textContent = "");
 
     const form = document.getElementById("registrationForm");
     const userRegistration = readyFormData(form);
@@ -75,7 +76,7 @@ btn.addEventListener("click", async (e) => {
 
 
     if (response.status === 200) {
-        alert("User created successfully! userid: " + response.data.id);
+        alert("User created successfully!");
 
         // Auto-login
         const loginPayload = {

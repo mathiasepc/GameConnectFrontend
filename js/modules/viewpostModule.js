@@ -103,17 +103,23 @@ export function createPostElement(post, options = {}) {
         "text-xl", "text-gray-700", "pb-3"
     );
 
+
+
 // Like button
     const likeBtn = document.createElement("button");
     likeBtn.type = "button";
     likeBtn.classList.add("hover:text-blue-500", "transition");
 
-    likeBtn.innerHTML = `<i class="fa-regular fa-heart"></i>`;
+// Icon element (keep reference)
+    const likeIcon = document.createElement("i");
+    likeIcon.classList.add("fa-regular", "fa-heart");
+    likeBtn.appendChild(likeIcon);
 
-    likeBtn.addEventListener("click", () => {
-        console.log("Like clicked for post:", post.id);
-        // TODO: integrate backend call POST /posts/{id}/like
-    });
+    if (post.likedByMe) {
+        likeIcon.classList.remove("fa-regular");
+        likeIcon.classList.add("fa-solid", "text-red-500");
+    }
+
 
     const likeGroup = document.createElement("div");
     likeGroup.classList.add(
@@ -121,7 +127,53 @@ export function createPostElement(post, options = {}) {
     )
 
     const likeCount = document.createElement("span");
-    likeCount.innerHTML = "1234";
+    likeCount.innerHTML =  post.likesCount ?? 0;;
+
+// button click
+    likeBtn.addEventListener("click", async () => {
+        if (!token) {
+            alert("You must be logged in to like posts");
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                `http://localhost:8080/timeline/posts/${post.id}/like`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Like request failed");
+            }
+
+            const data = await response.json();
+            // data = { liked: boolean, likeCount: number }
+
+            // Update count
+            likeCount.textContent = data.likeCount;
+
+            // Update icon state
+            if (data.liked) {
+                likeIcon.classList.remove("fa-regular");
+                likeIcon.classList.add("fa-solid", "text-red-500");
+            } else {
+                likeIcon.classList.remove("fa-solid", "text-red-500");
+                likeIcon.classList.add("fa-regular");
+            }
+
+        } catch (err) {
+            console.error(err);
+            alert("Could not update like");
+        }
+    });
+
+
+
 
     likeGroup.appendChild(likeBtn)
     likeGroup.appendChild(likeCount)

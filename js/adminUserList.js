@@ -122,6 +122,8 @@ async function loadPage(){
         const editButtonCell = document.createElement("td")
         const editButton = document.createElement("button")
         editButton.textContent = "Edit"
+        editButton.value = user.id
+        editButton.addEventListener("click", () => openEditForm(editButton.value))
         editButtonCell.appendChild(editButton)
         row.appendChild(editButtonCell)
         editButtonCell.classList.add(
@@ -233,6 +235,10 @@ async function onConfirmDelete(){
 }
 
 
+function openEditForm(userID) {
+    localStorage.setItem("editUserID", userID);
+    window.location.href = "adminEditUser.html";
+}
 
 
 
